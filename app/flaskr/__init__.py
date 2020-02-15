@@ -395,6 +395,11 @@ def create_app(test_config=None):
 
 				# Update user query list
 				user = db.execute('SELECT * FROM user WHERE username = ?', (g.user['username'],))
+				if user['query_list'] == "":
+					new_query_list = str(query_id)
+				else:
+					new_query_list = user['query_list'] + ',' + str(query_id)
+				db.execute('UPDATE user SET query_list = ? WHERE username = ?', (new_query_list, g.user['username']))
 				db.commit()
 				return redirect(url_for('query_create'))
 
