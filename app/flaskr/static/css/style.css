@@ -68,3 +68,8 @@ hr {
   font-family: 'Lato', 'Helvetica', 'Arial', 'sans-serif';
 }
 
+.vote-divider {
+  background-color: black;
+  height: 1px;
+}
+

@@ -25,13 +25,42 @@
           <div class="col-md-1">
           </div>
           <div class="col-md-10">
+            {% for curr_answer, net_upvotes in answers %}
+                <div class="vote-divider"> </div>
+                <div class="black-box"> 
+                  <div class="row">
+                    <div class="col-md-1"> 
+                    </div>
+                    <div class="col-md-1"> 
+                      <div class=row> 
+                         <img src="{{ url_for('static', filename = 'chevron-arrow-up.svg') }}" style="width:50px; " alt="Up arrow">
+                      </div>
+                      <div class=row> 
+                        <h5 style="margin-left:15px">{{net_upvotes}} </h5>
+                      </div>
+                      <div class=row> 
+                        <img src="{{ url_for('static', filename = 'down.svg') }}" style="width:50px; " alt="Down arrow">
+                      </div>
+                    </div>
+                    <div class="col-md-9" style="padding-top:15px;"> 
+                      <h6 class="caps_class"> Posted by {{curr_answer.username}} </h6>
+                      <h2>{{curr_answer.content}} </h2>
+                    </div>
+                    <div class="col-md-1"> 
+                    </div>
+                  </div>
+                </div>
+            {% endfor %}
+            <div class="vote-divider"> </div>
+
+            <div style="height:20px"> </div>
+
             <form action="{{ url_for('post_answer') }}" method="post" >
               <div class="form-group">
+                <label for="comment context"> Don't see any satisfactory answers? Contribute your answer below. </label>
+                <textarea class="form-control" name="answer" rows="3" placeholder="Your answer here."></textarea>
 
-                <label for="comment context">Posting as {{g.user['username']}}</label>
-                <textarea class="form-control" name="answer" rows="3" placeholder="What do you see in the picture?"></textarea>
                 <input class="rnd-btn" style="margin-top: 20px" type="submit" name="submit answer" class="rnd-btn"  value="submit answer">
-
               </div>
             </form>
           </div>
