@@ -413,17 +413,24 @@ def create_app(test_config=None):
 		print('hi')
 
 		username = g.user["username"]
-		user = db.execute(
-            'SELECT * FROM user WHERE username = ?', (username,)
-        ).fetchone()
+		users = db.execute(
+            'SELECT * FROM user')
+		query_list = []
+		for row in iter(users.fetchall()):
+			if row["user_type"] == 0: 
+				curr_query_list = row["query_list"].split(",")
+				if row["query_list"] != '':
+					query_list.extend(curr_query_list)
+
+				
 
 
-		if user['query_list'] == '':
-			return render_template('retina/query_view.html', user_queries=[], num_queries=0)
+		# if user['query_list'] == '':
+		# 	return render_template('retina/query_view.html', user_queries=[], num_queries=0)
 
-		user_query_ids = user['query_list'].split(',')
+		# user_query_ids = user['query_list'].split(',')
 		user_queries = []
-
+		user_query_ids = query_list
 		for query_id in user_query_ids:
 			print(query_id)
 			query = db.execute('SELECT * FROM query WHERE id = ?', (int(query_id),)).fetchone()
