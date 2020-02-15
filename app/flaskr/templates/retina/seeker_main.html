@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block mainbody %}
+
+
+    {% if g.user %}
+    <div id="seeker-main" class="container" style="padding-top: 100px">
+      <div class="row" style="margin-top: 100px">
+        <button class="btn btn-primary btn-main active" role="button" aria-pressed="true">
+          <span style="margin: 50px">New Queries</span>
+        </button>
+      </div>
+
+      <div class="row">
+        <button class="btn btn-primary btn-main active" role="button" aria-pressed="true">
+          <span style="margin: 50px">Previous Queries</span>
+        </button>
+      </div>
+    </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}

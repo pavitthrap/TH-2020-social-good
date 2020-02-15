@@ -413,26 +413,26 @@ footer ul li a:hover, footer ul li a:focus, footer ul li a:active, footer ul li 
   padding-left: 0;
 }
 
-.btn-outline {
+.rnd-btn-outline {
   color: white;
   border: 1px solid;
   border-color: white;
 }
 
-.btn-outline:hover, .btn-outline:focus, .btn-outline:active, .btn-outline.active {
+.rnd-btn-outline:hover, .rnd-btn-outline:focus, .rnd-btn-outline:active, .rnd-btn-outline.active {
   color: white;
   border-color: #fdcc52;
   background-color: #fdcc52;
 }
 
-.btn {
+.rnd-btn {
   border-radius: 300px;
   font-family: 'Lato', 'Helvetica', 'Arial', 'sans-serif';
   letter-spacing: 2px;
   text-transform: uppercase;
 }
 
-.btn-xl {
+.rnd-btn-xl {
   font-size: 11px;
   padding: 15px 45px;
 }

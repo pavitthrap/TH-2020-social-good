@@ -24,7 +24,6 @@ hr {
     padding: 0;
 }
 
-
 .top-heading {
 	font-weight: bold;
   font-size: 80px;
@@ -33,4 +32,15 @@ hr {
 .sec-heading {
   font-weight: bold;
   font-size: 50px;
+}
+
+#seeker-main > .row {
+  text-align: center!important;
+  display: block;
+  margin: 15px 0;
+}
+
+.btn-main {
+  width: 500px;
+  height: 100px;
 }
