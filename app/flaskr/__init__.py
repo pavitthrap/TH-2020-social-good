@@ -1,7 +1,7 @@
-import os 
+import os
 
-from flask import Flask, g, render_template, request, url_for, redirect, send_from_directory
-import json 
+from flask import Flask, g, render_template, request, url_for, redirect
+import json
 import threading
 #from . import db
 
@@ -170,24 +170,36 @@ def stop_cb(evt):
 
 
 
+def get_db():
+    """Connect to the application's configured database. The connection
+    is unique for each request and will be reused if this is called
+    again.
+    """
+    if 'db' not in g:
+        g.db = sqlite3.connect(
+            current_app.config['DATABASE'],
+            detect_types=sqlite3.PARSE_DECLTYPES
+        )
+        g.db.row_factory = sqlite3.Row
+
+    return g.db
 
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
-
 def create_app(test_config=None):
-	# create and configure the app 
+	# create and configure the app
 	app = Flask(__name__, instance_relative_config=True)
 	app.config.from_mapping(
-		SECRET_KEY='dev', 
+		SECRET_KEY='dev',
 		DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
 	)
 
 	if test_config is None:
-		#load the instance config, if it exists, when not testing 
+		#load the instance config, if it exists, when not testing
 		app.config.from_pyfile('config.py', silent=True)
 	else:
-		#load the test config if passed in 
+		#load the test config if passed in
 		app.config.from_mapping(test_config)
 
 
@@ -197,15 +209,23 @@ def create_app(test_config=None):
 	except OSError:
 		pass
 
-    # a simple page that says hello 
+    # a simple page that says hello
 	@app.route('/query_create')
-	def hello():
+	def query_create():
 		screen_text = ""
 		sentiment=0.9
 		keywords= "retina"
-		return render_template('retina/query_create.html', screen_text=screen_text, sentiment=sentiment, keywords=keywords)
+		return render_template('retina/query_create.html', screen_text=screen_text)
 
-	@app.route('/upload_file', methods=['GET', 'POST'])
+	@app.route('/query_display')
+	def query_display():
+		screen_text = ""
+		sentiment=0.9
+		keywords= "retina"
+		full_path = os.path.join(request.host_url, 'static', 'uploads', request.args['filename'])
+		return render_template('retina/query_display.html', screen_text=screen_text, display_image = full_path)
+
+	@app.route('/upload_file', methods=['POST'])
 	def upload_file():
 		if request.method == 'POST':
 			# check if the post request has the file part
@@ -216,12 +236,8 @@ def create_app(test_config=None):
 			if file.filename == '':
 				return redirect(request.url)
 			if file and allowed_file(file.filename):
-				file.save(os.path.join(app.instance_path, 'uploads', file.filename))
-				return send_from_directory(os.path.join(app.instance_path, 'uploads'), file.filename)
-		screen_text = ""
-		sentiment=0.9
-		keywords= "retina"
-		return render_template('retina/query_create.html', screen_text=screen_text, sentiment=sentiment, keywords=keywords)
+				file.save(os.path.join(app.static_folder, 'uploads', file.filename))
+				return redirect(url_for('query_display', filename=file.filename))
 
 	@app.route('/user/<username>/query_view')
 	def view_user_queries(username):
@@ -254,7 +270,7 @@ def create_app(test_config=None):
 	    # row = get_db().execute(
 	    #         'SELECT * FROM status WHERE id = (SELECT MAX(id) FROM status);'
 	    #     ).fetchone()
-	    
+
 	    """Show all the posts, most recent first."""
 	    #print("show index")
 	    global demo, curr_text, analysis_result, keyword_result, sentiment_result
@@ -264,7 +280,7 @@ def create_app(test_config=None):
 	        g.state = 1
 	    if request.method == 'POST':
 	        print(request.form)
-	        
+
 	        request_JSON = request.data
 	        #print(request_JSON)
 	        #request_JSON = json.dumps(request_JSON)
@@ -293,12 +309,12 @@ def create_app(test_config=None):
 	        elif 'name=startdemo' == request_JSON or 'demo1.x' in request.form:
 	        	demo=True
 	        	counter = 0
-	        elif 'name=getupdate' == request_JSON: 
+	        elif 'name=getupdate' == request_JSON:
 	        	screen_text = curr_text
-	        elif 'seecall' in request.form: 
+	        elif 'seecall' in request.form:
 	        	g.state = 6
-	        	print("curr text is", curr_text)
 	        	screen_text = curr_text
+	        # print("going to return")
 	        return render_template('blog/index.html', screen_text=screen_text, sentiment=sentiment, keywords=keywords)
 
 	    # db = get_db()
