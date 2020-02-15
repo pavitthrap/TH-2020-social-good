@@ -13,10 +13,10 @@
           <div class="col-md-12" style="padding:45px">
             <h1 class="sec-heading">Title: {{ res.title }}</h1>
             <h2>Subtitle: {{ res.subtitle }}</h2> <!-- subtitle info -->
-             <div class="img-display" >
+            <h2>Category: {{ res.category }}</h2> <!-- category info -->
+            <div class="img-display" >
               <img src="{{ res.pic_filename }}" alt="image for the query"/>
             </div>
-            <h2>Category: {{ res.category }}</h2> <!-- category info -->
           </div>
         </div>
         
@@ -25,16 +25,20 @@
           <div class="col-md-2">
           </div>
           <div class="col-md-8">
-            <form>
+            <form action="{{ url_for('post_answer') }}" method="post" >
               <div class="form-group">
-                <label for="answer">Posting as {{g.user['username']}}</label>
-                <textarea class="form-control" id="answer" rows="3" placeholder="What do you see in the picture?"></textarea>
+                <label for="comment context">Posting as {{g.user['username']}}</label>
+                <textarea class="form-control" name="answer" rows="3" placeholder="What do you see in the picture?"></textarea>
+                <input class="rnd-btn" style="margin-top: 20px" type="submit" name="submit answer" class="rnd-btn"  value="submit answer">
               </div>
             </form>
           </div>
           <div class="col-md-2">
           </div>
         </div>
+
+        <div class="row" style="height: 30px;">  </div>
+
       </div>
     </div>
 

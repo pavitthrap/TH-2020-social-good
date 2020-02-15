@@ -426,10 +426,11 @@ footer ul li a:hover, footer ul li a:focus, footer ul li a:active, footer ul li 
 }
 
 .rnd-btn {
-  border-radius: 300px;
+  border-radius: 30px;
   font-family: 'Lato', 'Helvetica', 'Arial', 'sans-serif';
   letter-spacing: 2px;
   text-transform: uppercase;
+  padding: 15px 45px;
 }
 
 .rnd-btn-xl {

@@ -174,6 +174,13 @@ def get_db():
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
+def create_fake_data():
+    db = get_db()
+    db.execute(
+        'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)',
+        (3, 2, "Hello2", "Bob", "img.jpg", "hello", "yo", "whut")
+        )
+
 def create_app(test_config=None):
 	# create and configure the app
 	app = Flask(__name__, instance_relative_config=True)
@@ -216,19 +223,28 @@ def create_app(test_config=None):
 		full_path = os.path.join(request.host_url, 'static', 'uploads', request.args['filename'])
 		return render_template('retina/query_display.html', screen_text=screen_text, display_image = full_path)
 
-	@app.route('/post_answer')
-	def post_answer():
+	@app.route('/post_answer', methods=('GET', 'POST'))
+	def post_answer(query_id=0):
 		db = get_db()
-		db.execute(
-		'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)',
-		(3, 2, "Hello2", "Bob", "img.jpg", "hello", "yo", "whut")
-		)
-		res = db.execute('SELECT * FROM query').fetchone()
-		print(res)
+		# create_fake_data()
+		if request.method == 'POST':
+			answer = request.form['answer']
+
+			# TODO: put the answer in the DB 
+			# TODO: update the query to add this answer id to it 
+			# TODO: return to the home feed for posts 
+			# TODO: add query_state field for the query 
+			return render_template('retina/post_answer.html', res=query, screen_text=screen_text)
+
+		query = db.execute(
+	    	'SELECT * FROM query WHERE id = ?', (query_id,)
+	    	).fetchone()
+
+		print(query)
 		screen_text = ""
 		sentiment=0.9
 		keywords= "retina"
-		return render_template('retina/post_answer.html', res=res, screen_text=screen_text)
+		return render_template('retina/post_answer.html', res=query, screen_text=screen_text)
 
 	@app.route('/seeker_main')
 	def seeker_main():
@@ -349,6 +365,8 @@ def create_app(test_config=None):
 	app.register_blueprint(user.bp)
 
 	app.add_url_rule('/', endpoint='index')
+
+
 
 	@app.before_first_request
 	def activate_job():
