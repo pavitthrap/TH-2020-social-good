@@ -203,10 +203,7 @@ def create_app(test_config=None):
     # a simple page that says hello
 	@app.route('/query_create')
 	def query_create():
-		screen_text = ""
-		sentiment=0.9
-		keywords= "retina"
-		return render_template('retina/query_create.html', screen_text=screen_text)
+		return render_template('retina/query_create.html')
 
 	@app.route('/query_display')
 	def query_display():
