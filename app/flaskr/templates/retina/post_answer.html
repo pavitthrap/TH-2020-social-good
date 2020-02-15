@@ -14,7 +14,7 @@
             <h1 class="sec-heading">Title: {{ res.title }}</h1>
             <h2>Subtitle: {{ res.subtitle }}</h2> <!-- subtitle info -->
              <div class="img-display" >
-              <img src="{{ res.pic_filename }}" alt="image for the query"/>
+              <img src="{{ request.url_root + "static/uploads/" + res.pic_filename }}" alt="image for the query"/>
             </div>
             <h2>Category: {{ res.category }}</h2> <!-- category info -->
           </div>
