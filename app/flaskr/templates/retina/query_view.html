@@ -44,7 +44,7 @@
                 <div class="row">
                     <div class="col-md-1"> </div>
                     <div class="col-md-2" style="padding-top: 15px">
-                        <img src="{{ url_for('static', filename = query.pic_filename) }}" style="width:80px; margin-bottom:30px" alt="Query Picture">
+                        <img src="{{ request.url_root + 'static/uploads/' + query.pic_filename }}" style="width:80px; margin-bottom:30px" alt="Query Picture">
                         <h6 class="caps_class"> CATEGORY: {{ query.category }}</h6>
                     </div>
                     <div class="col-md-7" style="padding-top: 10px">

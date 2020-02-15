@@ -62,8 +62,8 @@ def allowed_file(filename):
 
 def create_fake_data():
 	db = get_db()
-	query_ids = [3,1]
-	answer_ids = [3, 5, 2, 7, 8, 9]
+	query_ids = [3,1,2]
+	answer_ids = [3, 5, 2, 7, 8, 9, 10]
 
 	# Check to see if fake data's already been created
 	answer = db.execute(
@@ -75,11 +75,20 @@ def create_fake_data():
 	# Create fake data
 	username = g.user['username']
 	db.execute(
-		'UPDATE user SET query_list = ? WHERE username = ?', ("1,3", username)
+		'UPDATE user SET query_list = ? WHERE username = ?', ("1,3,2", username)
 	)
 	db.execute(
-	'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)',
-	(query_ids[0], 2, "What is the price", "Price below", "xbox_price.JPG", "price tag", "8", "8,9")
+	'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list, answer_state, machine_answer_id) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+	(query_ids[2], 2, "What is the thing", "Price below", "garden.JPG", "miscellaneous", "10", "10", 2, answer_ids[6])
+	)
+	db.execute(
+	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
+	(answer_ids[6], 4, 1, 3, 'Garden Fork', "dave")
+	)
+	#another one
+	db.execute(
+	'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list, answer_state, machine_answer_id) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+	(query_ids[0], 2, "What is the price", "Price below", "xbox_price.JPG", "price tag", "8", "8,9", 1, answer_ids[4])
 	)
 	db.execute(
 	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
@@ -89,6 +98,8 @@ def create_fake_data():
 	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
 	(answer_ids[5], 4, 4, 3, '$3990', "jane")
 	)
+
+	#another one
 	
 	db.execute(
 	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
@@ -99,8 +110,8 @@ def create_fake_data():
 	(answer_ids[3], 2, 4, 1, 'boy', "tester")
 	)
 	db.execute(
-	'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list, machine_answer_id) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-	(query_ids[1], 2, "Is this apple bad", "apple below", "124687474-rotten-apple-on-a-white-background.jpg", "produce", "3", "3,5,2,7", answer_ids[3])
+	'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list, answer_state, machine_answer_id) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+	(query_ids[1], 2, "Is this apple bad", "apple below", "124687474-rotten-apple-on-a-white-background.jpg", "produce", "3", "3,5,2,7", 0, answer_ids[3])
 	)
 	db.execute(
 	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
@@ -157,23 +168,24 @@ def create_app(test_config=None):
     # a simple page that says hello
 	@app.route('/query_create')
 	def query_create():
-		remote_image_url = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-sample-data-files/master/ComputerVision/Images/landmark.jpg"
+		# local_image_path = "flaskr/static/scam.jpg"
+		# local_image = open(local_image_path, "rb") 
 		
-		print("===== Describe the sample image =====")
-		# Call API
-		description_features = ["categories"]
-		description_results = computervision_client.describe_image(remote_image_url)
-		description_categories = computervision_client.analyze_image(remote_image_url, description_features)
-		print(description_results)
-		print("CATEGORIES\n")
-		print(description_categories)
+		# print("===== Describe the sample image =====")
+		# # Call API
+		# description_features = ["categories"]
+		# description_results = computervision_client.describe_image_in_stream(local_image)
+		# description_categories = computervision_client.analyze_image_in_stream(local_image, description_features)
+		# print(description_results)
+		# print("CATEGORIES\n")
+		# print(description_categories)
 
-		# Get the captions (descriptions) from the response, with confidence level
-		print("Description of remote image: ")
-		if (len(description_results.captions) == 0):
-			print("No description detected.")
-		else:
-			print("Description: '{}'".format(description_results.captions[0].text))
+		# # Get the captions (descriptions) from the response, with confidence level
+		# print("Description of remote image: ")
+		# if (len(description_results.captions) == 0):
+		# 	print("No description detected.")
+		# else:
+		# 	print("Description: '{}'".format(description_results.captions[0].text))
 		return render_template('retina/query_create.html')
 
 	@app.route('/query_display')
@@ -305,6 +317,10 @@ def create_app(test_config=None):
 	def seeker_main():
 		return render_template('retina/seeker_main.html')
 
+	@app.route('/leaderboard')
+	def leaderboard():
+		return render_template('retina/leaderboard.html')
+
 	@app.route('/upload_file', methods=['POST'])
 	def upload_file():
 		if request.method == 'POST':
@@ -316,7 +332,8 @@ def create_app(test_config=None):
 			if file.filename == '':
 				return redirect(request.url)
 			if file and allowed_file(file.filename):
-				file.save(os.path.join(app.static_folder, 'uploads', file.filename))
+				file_path = os.path.join(app.static_folder, 'uploads', file.filename)
+				file.save(file_path)
 
 				db = get_db()
 				timestamp  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
@@ -327,6 +344,29 @@ def create_app(test_config=None):
 				db.execute(
 					'INSERT INTO query (author_id, created, title, subtitle, pic_filename, category) VALUES (?, ?, ?, ?, ?, ?)',
 					(session.get('user_id'), timestamp, title, subtitle, file.filename, category)
+				)
+				# Get query ID
+				query = db.execute('SELECT * FROM query WHERE title = ?', (title,)).fetchone()
+				query_id = query['id']
+				# Generate machine description
+				print("===== Describe the local image =====")
+				local_image = open(file_path, "rb") 
+				description_features = ["categories"]
+				description_results = computervision_client.describe_image_in_stream(local_image)
+				print("Description of local image: ")
+				if (len(description_results.captions) == 0):
+					print("No description detected.")
+				else:
+					print("Description: '{}'".format(description_results.captions[0].text))
+				db.execute(
+					'INSERT INTO answer (query_id, content, username) VALUES (?, ?, ?)',
+					(query_id, description_results.captions[0].text, g.user['username'])
+				)
+				# Get answer ID
+				answer = db.execute('SELECT * FROM answer WHERE content = ?', (description_results.captions[0].text,)).fetchone()
+				answer_id = answer['id']
+				db.execute(
+					'UPDATE query SET machine_answer_id = ? WHERE title = ?', (answer_id, title)
 				)
 				db.commit()
 				return redirect(url_for('index'))
@@ -417,6 +457,8 @@ def create_app(test_config=None):
 
 	@app.route('/', methods=('GET', 'POST'))
 	def index():
+		if g.user is None:
+			return redirect(url_for('auth.login'))
 		if g.user["user_type"] == 0:
 			return render_template('blog/index.html')
 		elif g.user["user_type"] == 1:
