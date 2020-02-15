@@ -240,7 +240,7 @@ def create_app(test_config=None):
 
 		(print(query_id))
 		db = get_db()
-		create_fake_data()
+		# create_fake_data()
 
 		query = db.execute(
 		   	'SELECT * FROM query WHERE id = ?', (query_id,)
@@ -256,7 +256,7 @@ def create_app(test_config=None):
 	@app.route('/vote_answer')
 	def vote_answer():
 		db = get_db()
-		create_fake_data()
+		# create_fake_data()
 		query_id = request.args.get('query_id')
 		answer_id = request.args.get('answer_id')
 		up = request.args.get('up')
@@ -271,7 +271,6 @@ def create_app(test_config=None):
 			else: db.execute('UPDATE answer SET downvotes = ? WHERE id = ?', (downvotes + 1, answer_id))
 		db.commit()
 
-		create_fake_data()
 		if request.method == 'POST':
 
 			# Put the answer in the db
@@ -342,13 +341,18 @@ def create_app(test_config=None):
 				subtitle = request.form.get('subtitle')
 				category = request.form.get('category')
 
+				#TODO - add username
 				db.execute(
 					'INSERT INTO query (author_id, created, title, subtitle, pic_filename, category) VALUES (?, ?, ?, ?, ?, ?)',
 					(session.get('user_id'), timestamp, title, subtitle, file.filename, category)
 				)
+
 				# Get query ID
 				query = db.execute('SELECT * FROM query WHERE title = ?', (title,)).fetchone()
 				query_id = query['id']
+				
+				print(query, query["title"])
+
 				# Generate machine description
 				print("===== Describe the local image =====")
 				local_image = open(file_path, "rb") 
@@ -408,7 +412,7 @@ def create_app(test_config=None):
 		# Fetch user queries from db
 		db = get_db()
 
-		# create_fake_data()
+		#create_fake_data()
 
 		username = g.user["username"]
 		user = db.execute(
@@ -428,13 +432,14 @@ def create_app(test_config=None):
 			color = 'red' if query_answer_state == 0 else 'yellow' if query_answer_state == 1 else 'green'
 			query_id = int(query_id)
 			user_queries.append((query, top_answer, num_answers, color, query_id))
-
+		
+		db.commit()
 		return render_template('retina/past_queries.html', user_queries=user_queries, num_queries=len(user_queries))
 
 	@app.route('/profile', methods=('GET', 'POST'))
 	def user_profile():
 		db = get_db()
-		create_fake_data()
+		# create_fake_data()
 
 		username = g.user["username"]
 		user_type = "Seeker" if g.user['user_type']==0 else "Answerer"
