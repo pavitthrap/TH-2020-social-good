@@ -409,6 +409,7 @@ def create_app(test_config=None):
 		db = get_db()
 
 		# create_fake_data()
+		# db.commit()
 
 		username = g.user["username"]
 		user = db.execute(
