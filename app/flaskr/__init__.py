@@ -17,7 +17,18 @@ def after_this_request(f):
 	return f
 
 ###############################
-# import azure.cognitiveservices.speech as speechsdk
+# Azure stuff
+from azure.cognitiveservices.vision.computervision import ComputerVisionClient
+from azure.cognitiveservices.vision.computervision.models import TextOperationStatusCodes
+from azure.cognitiveservices.vision.computervision.models import TextRecognitionMode
+from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
+from msrest.authentication import CognitiveServicesCredentials
+
+from array import array
+import os
+from PIL import Image
+import sys
+import time
 import time
 import requests
 from pprint import pprint
@@ -25,16 +36,13 @@ import re
 
 counter = 0
 
-subscription_key = "cc5ab8a32df6484981ec582e6669bd36"
+# Add your Computer Vision subscription key and Computer Vision endpoint
+subscription_key = '778bdd6307a54f5b8054a00930642d02'
+endpoint = 'https://retinaid.cognitiveservices.azure.com/'
 assert subscription_key
+assert endpoint
 
-text_analytics_base_url = "https://eastus2.api.cognitive.microsoft.com/text/analytics/v2.0"
-
-
-speech_key = "6fd6a1d3a05742f8bfaf9ffdccfffbb6"
-service_region = "westus"
-key_phrase_api_url = text_analytics_base_url + "/keyPhrases"
-senti_phrase_api_url = text_analytics_base_url + "/sentiment"
+computervision_client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(subscription_key))
 
 
 def get_db():
@@ -142,6 +150,17 @@ def create_app(test_config=None):
     # a simple page that says hello
 	@app.route('/query_create')
 	def query_create():
+		remote_image_url = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-sample-data-files/master/ComputerVision/Images/landmark.jpg"
+		print("===== Describe the sample image =====")
+		# Call API
+		description_results = computervision_client.describe_image(remote_image_url)
+
+		# Get the captions (descriptions) from the response, with confidence level
+		print("Description of remote image: ")
+		if (len(description_results.captions) == 0):
+			print("No description detected.")
+		else:
+			print("Description: '{}'".format(description_results.captions[0].text))
 		return render_template('retina/query_create.html')
 
 	@app.route('/query_display')
