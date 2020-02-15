@@ -23,8 +23,24 @@
 
     {% if g.user %}
 
-    <div class="container query-view">
-      <!-- dynamically add query elements -->
+    <div class="container" style="padding-top: 100px">
+        {% for query in user_queries %}
+            <div id="new-post">
+                <div class="row">
+                    <div class="col-md-2" style="padding-top: 15px">
+                        <img src="{{ url_for('static', filename = query.pic_filename) }}" style="width:80px; margin-bottom:30px" alt="User Icon">
+                    </div>
+                    <div class="col-md-10" style="padding-top: 10px">
+                        <div class="row">
+                            <h1> {{ query.title }} </h1>
+                        </div>
+                        <div class="row">
+                            <h3> Top Response: {{ query.top_answer }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 
     {% endif %}
