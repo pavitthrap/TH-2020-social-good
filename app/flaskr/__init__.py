@@ -1,8 +1,10 @@
 import os
 
-from flask import Flask, g, render_template, request, url_for, redirect
+from flask import Flask, g, render_template, request, url_for, redirect, session
 import json
 import threading
+import datetime
+import time
 #from . import db
 
 from flaskr.db import get_db
@@ -244,6 +246,18 @@ def create_app(test_config=None):
 				return redirect(request.url)
 			if file and allowed_file(file.filename):
 				file.save(os.path.join(app.static_folder, 'uploads', file.filename))
+
+				db = get_db()
+				timestamp  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+				title = request.form.get('title')
+				subtitle = request.form.get('subtitle')
+				category = request.form.get('category')
+
+				db.execute(
+					'INSERT INTO query (author_id, created, title, subtitle, pic_filename, category) VALUES (?, ?, ?, ?, ?, ?)',
+					(session.get('user_id'), timestamp, title, subtitle, file.filename, category)
+				)
+				db.commit()
 				return redirect(url_for('query_display', filename=file.filename))
 
 	@app.route('/user/<username>/query_view')
@@ -254,8 +268,14 @@ def create_app(test_config=None):
             'SELECT * FROM user WHERE username = ?', (username,)
         ).fetchone()
 
-		user_queries = [''] # user['user_queries']
+		user_queries = {1: {'picture_filename':'user_icon_2.png',
+						'question':'what the heck',
+						'responses': ['peaches', 'yah', 'apple']},
+						2: {'picture_filename':'user_icon_2.png',
+						'question':'what dis',
+						'responses': ['bananas', 'bums', 'balligators']}} # user['user_queries']
 		return render_template('retina/query_view.html', user_queries=user_queries)
+
 	@app.route('/', methods=('GET', 'POST'))
 	def index(screen_text="Unknown Caller", sentiment=0.9, keywords=7):
 	    # row = get_db().execute(
