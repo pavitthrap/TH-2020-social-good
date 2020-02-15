@@ -401,7 +401,7 @@ def create_app(test_config=None):
 					new_query_list = user['query_list'] + ',' + str(query_id)
 				db.execute('UPDATE user SET query_list = ? WHERE username = ?', (new_query_list, g.user['username']))
 				db.commit()
-				return redirect(url_for('query_create'))
+				return redirect(url_for('/'))
 
 	@app.route('/query_view')
 	def view_user_queries():
