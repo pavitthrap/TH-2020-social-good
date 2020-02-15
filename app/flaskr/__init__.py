@@ -113,7 +113,7 @@ def create_fake_data():
 	)
 	db.execute(
 	'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list, answer_state, machine_answer_id) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-	(query_ids[1], 2, "Is this apple bad", "apple below", "124687474-rotten-apple-on-a-white-background.jpg", "produce", "3", "3,5,2,7", 0, answer_ids[3])
+	(query_ids[1], 2, "Is this apple bad", "apple below", "124687474-rotten-apple-on-a-white-background.jpg", "produce", "3", "3,5,2,7", 0, answer_ids[1])
 	)
 	db.execute(
 	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
