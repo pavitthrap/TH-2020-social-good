@@ -388,6 +388,9 @@ def create_app(test_config=None):
 				db.execute(
 					'UPDATE query SET machine_answer_id = ? WHERE title = ?', (answer_id, title)
 				)
+
+				# Update user query list
+				user = db.execute('SELECT * FROM user WHERE username = ?', (g.user['username'],))
 				db.commit()
 				return redirect(url_for('query_create'))
 
@@ -433,8 +436,7 @@ def create_app(test_config=None):
 
 		username = g.user["username"]
 		user = db.execute(
-            'SELECT * FROM user WHERE username = ?', (username,)
-        ).fetchone()
+			'SELECT * FROM user WHERE username = ?', (username,)).fetchone()
 
 		if user['query_list'] == '':
 			return render_template('retina/past_queries.html', user_queries=[], num_queries=0)
