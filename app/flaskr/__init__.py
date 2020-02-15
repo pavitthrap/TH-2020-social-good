@@ -203,10 +203,7 @@ def create_app(test_config=None):
     # a simple page that says hello
 	@app.route('/query_create')
 	def query_create():
-		screen_text = ""
-		sentiment=0.9
-		keywords= "retina"
-		return render_template('retina/query_create.html', screen_text=screen_text)
+		return render_template('retina/query_create.html')
 
 	@app.route('/query_display')
 	def query_display():
@@ -219,12 +216,7 @@ def create_app(test_config=None):
 	@app.route('/post_answer')
 	def post_answer():
 		db = get_db()
-		db.execute(
-		'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)',
-		(3, 2, "Hello2", "Bob", "img.jpg", "hello", "yo", "whut")
-		)
 		res = db.execute('SELECT * FROM query').fetchone()
-		print(res)
 		screen_text = ""
 		sentiment=0.9
 		keywords= "retina"

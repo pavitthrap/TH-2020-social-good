@@ -6,13 +6,13 @@
     {% if g.user %}
     <div id="seeker-main" class="container" style="padding-top: 100px">
       <div class="row" style="margin-top: 100px">
-        <button class="btn btn-primary btn-main active" role="button" aria-pressed="true">
+        <button class="btn btn-primary btn-main active" onclick="window.location.href = '{{url_for('query_create')}}';"aria-pressed="true">
           <span style="margin: 50px">New Queries</span>
         </button>
       </div>
 
       <div class="row">
-        <button class="btn btn-primary btn-main active" role="button" aria-pressed="true">
+        <button class="btn btn-primary btn-main active" onclick="window.location.href = '{{url_for('view_user_queries', username=g.user.username)}}';" aria-pressed="true">
           <span style="margin: 50px">Previous Queries</span>
         </button>
       </div>
