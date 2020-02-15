@@ -23,3 +23,13 @@ hr {
     padding: 0;
 }
 
+#seeker-main > .row {
+  text-align: center!important;
+  display: block;
+  margin: 15px 0;
+}
+
+.btn-main {
+  width: 500px;
+  height: 100px;
+}
