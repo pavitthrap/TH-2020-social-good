@@ -34,7 +34,7 @@
         {% for query, top_answer, num_answers, color, query_id in user_queries %}
             {% set color_class = color+'box' %}
             {% if color=="green" %}
-                {% set redirect= url_for('post_answer', query_id=query_id)   %}
+                {% set redirect= url_for('vote_answer', query_id=query_id)   %}
             {% elif color=="red" %}
                 {% set redirect= url_for('view_answer', query_id=query_id) %}
             {% elif color=="yellow" %}
