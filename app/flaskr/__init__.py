@@ -265,17 +265,32 @@ def create_app(test_config=None):
 		# Fetch user queries from db
 		username = g.user['username']
 		db = get_db()
+
+		# TODO: Remove these temporary entries
 		db.execute(
 			'UPDATE user SET query_list = ? WHERE username = ?', ("1,3", username)
 		)
 		db.execute(
 		'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)',
-		(3, 2, "Hello2", "Bob", "img.jpg", "hello", "yo", "whut")
+		(3, 2, "Hello2", "Bob", "img.jpg", "hello", "3", "3,5")
+		)
+		db.execute(
+		'INSERT INTO answer (id, upvotes, downvotes, query_id, content) VALUES ( ?, ?, ?, ?, ?)',
+		(3, 4, 2, 3, 'hoy')
+		)
+		db.execute(
+		'INSERT INTO answer (id, upvotes, downvotes, query_id, content) VALUES ( ?, ?, ?, ?, ?)',
+		(5, 2, 4, 3, 'boy')
 		)
 		db.execute(
 		'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)',
-		(1, 2, "Cantelope", "Bobbyjoe", "img.jpg", "yoyo", "antelope", "ntelope")
+		(1, 2, "Cantelope", "Bobbyjoe", "img.jpg", "yoyo", "2", "2,4,5,6,7,9,8,21")
 		)
+		db.execute(
+		'INSERT INTO answer (id, upvotes, downvotes, query_id, content) VALUES ( ?, ?, ?, ?, ?)',
+		(2, 16, 3, 1, 'choy')
+		)
+		# END TODO
 
 		user = db.execute(
             'SELECT * FROM user WHERE username = ?', (username,)
@@ -286,7 +301,10 @@ def create_app(test_config=None):
 		for query_id in user_query_ids:
 			print(query_id)
 			query = db.execute('SELECT * FROM query WHERE id = ?', (int(query_id),)).fetchone()
-			user_queries.append(query)
+			top_answer = db.execute('SELECT * FROM answer WHERE id = ?', (int(query['top_answer']),)).fetchone()
+			num_answers = len(query['answer_list'].split(','))
+			color = 'red' if num_answers < 4 else 'yellow' if num_answers < 8 else 'green'
+			user_queries.append((query, top_answer, num_answers, color))
 
 		return render_template('retina/query_view.html', user_queries=user_queries)
 
