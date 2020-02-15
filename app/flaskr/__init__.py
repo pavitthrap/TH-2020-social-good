@@ -1,6 +1,6 @@
 import os 
 
-from flask import Flask, g, render_template, request, url_for, redirect, send_from_directory
+from flask import Flask, g, render_template, request, url_for
 import json 
 import threading
 #from . import db
@@ -168,9 +168,20 @@ def stop_cb(evt):
 
 
 
+def get_db():
+    """Connect to the application's configured database. The connection
+    is unique for each request and will be reused if this is called
+    again.
+    """
+    if 'db' not in g:
+        g.db = sqlite3.connect(
+            current_app.config['DATABASE'],
+            detect_types=sqlite3.PARSE_DECLTYPES
+        )
+        g.db.row_factory = sqlite3.Row
 
-def allowed_file(filename):
-	return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+    return g.db
+
 
 
 def create_app(test_config=None):
@@ -196,30 +207,9 @@ def create_app(test_config=None):
 		pass
 
     # a simple page that says hello 
-	@app.route('/query_create')
+	@app.route('/hello')
 	def hello():
-		screen_text = ""
-		sentiment=0.9
-		keywords= "retina"
-		return render_template('retina/query_create.html', screen_text=screen_text, sentiment=sentiment, keywords=keywords)
-
-	@app.route('/upload_file', methods=['GET', 'POST'])
-	def upload_file():
-		if request.method == 'POST':
-			# check if the post request has the file part
-			if 'file' not in request.files:
-				return redirect(request.url)
-			file = request.files['file']
-
-			if file.filename == '':
-				return redirect(request.url)
-			if file and allowed_file(file.filename):
-				file.save(os.path.join(app.instance_path, 'uploads', file.filename))
-				return send_from_directory(os.path.join(app.instance_path, 'uploads'), file.filename)
-		screen_text = ""
-		sentiment=0.9
-		keywords= "retina"
-		return render_template('retina/query_create.html', screen_text=screen_text, sentiment=sentiment, keywords=keywords)
+		return 'Hello, World!'
 
 	#@app.before_request	
 	@app.route('/', methods=('GET', 'POST'))
@@ -270,8 +260,8 @@ def create_app(test_config=None):
 	        	screen_text = curr_text
 	        elif 'seecall' in request.form: 
 	        	g.state = 6
-	        	print("curr text is", curr_text)
 	        	screen_text = curr_text
+	        # print("going to return")
 	        return render_template('blog/index.html', screen_text=screen_text, sentiment=sentiment, keywords=keywords)
 
 	    # db = get_db()

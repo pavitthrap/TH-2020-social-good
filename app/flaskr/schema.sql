@@ -2,15 +2,18 @@
 -- Drop any existing data and create empty tables.
 
 DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS post;
+DROP TABLE IF EXISTS query;
+DROP TABLE IF EXISTS answer;
 DROP TABLE IF EXISTS status;
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username TEXT UNIQUE NOT NULL,
-  password TEXT NOT NULL
+  password TEXT NOT NULL,
   user_type INTEGER NOT NULL,
-  query_list TEXT 
+  query_list TEXT, 
+  profile_pic_filename TEXT NOT NULL, 
+  global_rank INTEGER DEFAULT 4
 );
 
 CREATE TABLE query (
