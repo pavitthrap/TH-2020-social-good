@@ -142,19 +142,19 @@ def analyze_it(sentence, phrases):
     counter += len(m)
 
 
-def sustain_speech():
-    print("sustain called")
-    speech_recognizer.start_continuous_recognition()
-    for i in range(35):
-        time.sleep(.5)
-    #print("CURR TEXT IS", curr_text)
-    speech_recognizer.stop_continuous_recognition()
+# def sustain_speech():
+#     print("sustain called")
+#     speech_recognizer.start_continuous_recognition()
+#     for i in range(35):
+#         time.sleep(.5)
+#     #print("CURR TEXT IS", curr_text)
+#     speech_recognizer.stop_continuous_recognition()
 
-def stop_cb(evt):
-    #"""callback that stops continuous recognition upon receiving an event `evt`"""
-    print('CLOSING on {}'.format(evt))
-    speech_recognizer.stop_continuous_recognition()
-    done = True
+# def stop_cb(evt):
+#     #"""callback that stops continuous recognition upon receiving an event `evt`"""
+#     print('CLOSING on {}'.format(evt))
+#     speech_recognizer.stop_continuous_recognition()
+#     done = True
 
 
 
@@ -199,20 +199,20 @@ def create_fake_data():
 	(query_ids[0], 2, "Hello2", "Bob", "img.jpg", "hello", "3", "3,5")
 	)
 	db.execute(
-	'INSERT INTO answer (id, upvotes, downvotes, query_id, content) VALUES ( ?, ?, ?, ?, ?)',
-	(answer_ids[0], 4, 2, 3, 'hoy')
+	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
+	(answer_ids[0], 4, 2, 3, 'hoy', username)
 	)
 	db.execute(
-	'INSERT INTO answer (id, upvotes, downvotes, query_id, content) VALUES ( ?, ?, ?, ?, ?)',
-	(answer_ids[1], 2, 4, 3, 'boy')
+	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
+	(answer_ids[1], 2, 4, 3, 'boy', username)
 	)
 	db.execute(
 	'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)',
 	(query_ids[1], 2, "Cantelope", "Bobbyjoe", "img.jpg", "yoyo", "2", "2,4,5,6,7,9,8,21")
 	)
 	db.execute(
-	'INSERT INTO answer (id, upvotes, downvotes, query_id, content) VALUES ( ?, ?, ?, ?, ?)',
-	(answer_ids[2], 16, 3, 1, 'choy')
+	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
+	(answer_ids[2], 16, 3, 1, 'choy', username)
 	)
 	return query_ids
 
@@ -310,7 +310,7 @@ def create_app(test_config=None):
 				)
 			return render_template('retina/query_create.html')
 
-		# TODO: uncommen below
+		# TODO: uncomment below
 		# query = db.execute(
 	    # 	'SELECT * FROM query WHERE id = ?', (query_id,)
 	    # 	).fetchone()
@@ -320,11 +320,77 @@ def create_app(test_config=None):
 	    	).fetchone()
 
 		print(query)
-		
+
 		screen_text = ""
 		sentiment=0.9
 		keywords= "retina"
 		return render_template('retina/post_answer.html', res=query, screen_text=screen_text)
+
+	@app.route('/view_answer')
+	def view_answer(query_id=0):
+		db = get_db()
+		create_fake_data()
+		# query = db.execute(
+		#    	'SELECT * FROM query WHERE id = ?', (query_id,)
+		#    	).fetchone()
+		query = db.execute(
+	    	'SELECT * FROM query'
+	    	).fetchone()
+
+
+		print(query)
+
+		screen_text = ""
+		sentiment=0.9
+		keywords= "retina"
+		return render_template('retina/view_answer.html', res=query, screen_text=screen_text)
+
+
+	@app.route('/vote_answer')
+	def vote_answer(query_id=0):
+		db = get_db()
+		create_fake_data()
+		if request.method == 'POST':
+			# Put the answer in the db
+			answer = request.form['answer']
+			db.execute('INSERT INTO answer (upvotes, downvotes, query_id, content) VALUES ( ?, ?, ?, ?)',
+						(0, 0, query_id, answer))
+			answer= db.execute('SELECT * FROM answer WHERE content = ?',
+						(answer,)).fetchone()
+			answer_id = answer['id']
+
+			# Update the corresponding query's answer_list and top_answer fields as appropriate
+			query = db.execute('SELECT * FROM query WHERE id = ?', (query_id,)).fetchone()
+			new_answer_list = query['answer_list'] + ',' + str(answer_id)
+			new_query_state = 0 # unanswered
+			db.execute(
+				'UPDATE query SET answer_list = ?, answer_state = ? WHERE id = ?', (new_answer_list, new_query_state, query_id)
+			)
+			top_answer_id = get_top_answer(new_answer_list)
+			if top_answer_id is not None:
+				db.execute(
+					'UPDATE query SET top_answer = ? WHERE id = ?', (str(top_answer_id), query_id)
+				)
+			return render_template('retina/query_create.html')
+
+		# query = db.execute(
+		#    	'SELECT * FROM query WHERE id = ?', (query_id,)
+		#    	).fetchone()
+		query = db.execute(
+	    	'SELECT * FROM query'
+	    	).fetchone()
+
+		print(query)
+
+		query_answer_ids = query['answer_list'].split(',')
+		query_answers = []
+		for answer_id in query_answer_ids:
+			print(answer_id)
+			answer = db.execute('SELECT * FROM answer WHERE id = ?', (int(answer_id),)).fetchone()
+			net_upvotes = answer['upvotes'] - answer['downvotes'] if answer!=None else 0
+			query_answers.append((answer, net_upvotes))
+		return render_template('retina/vote_answer.html', res=query, answers=query_answers, top_answer=query["top_answer"])
+
 
 	@app.route('/seeker_main')
 	def seeker_main():
@@ -363,6 +429,7 @@ def create_app(test_config=None):
 
 		create_fake_data()
 
+		username = g.user["username"]
 		user = db.execute(
             'SELECT * FROM user WHERE username = ?', (username,)
         ).fetchone()

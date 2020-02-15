@@ -32,10 +32,11 @@ CREATE TABLE query (
 
 CREATE TABLE answer (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  upvotes INTEGER DEFAULT 0,
-  downvotes INTEGER DEFAULT 0,
+  upvotes INTEGER NOT NULL DEFAULT 0,
+  downvotes INTEGER NOT NULL DEFAULT 0,
   query_id INTEGER NOT NULL,
-  content TEXT NOT NULL
+  content TEXT NOT NULL, 
+  username TEXT NOT NULL
 );
 
 CREATE TABLE status (
