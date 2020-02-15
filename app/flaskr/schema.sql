@@ -11,8 +11,8 @@ CREATE TABLE user (
   username TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
   user_type INTEGER NOT NULL,
-  query_list TEXT, 
-  profile_pic_filename TEXT, 
+  query_list TEXT,
+  profile_pic_filename TEXT,
   global_rank INTEGER DEFAULT 4
 );
 
@@ -22,17 +22,17 @@ CREATE TABLE query (
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   title TEXT NOT NULL,
   subtitle TEXT NOT NULL,
-  pic_filename TEXT, 
+  pic_filename TEXT,
   category TEXT NOT NULL,
-  top_answer TEXT, 
-  answer_list TEXT, 
+  top_answer TEXT,
+  answer_list TEXT,
   FOREIGN KEY (author_id) REFERENCES user (id)
 );
 
 CREATE TABLE answer (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  upvotes INTEGER DEFAULT 0, 
-  downvotes INTEGER DEFAULT 0, 
+  upvotes INTEGER DEFAULT 0,
+  downvotes INTEGER DEFAULT 0,
   query_id INTEGER NOT NULL
 );
 

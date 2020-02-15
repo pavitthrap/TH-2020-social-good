@@ -1,0 +1,8 @@
+
+#new-post {
+  background-color: rgba(28, 22, 22, 0.26);
+}
+
+#new-post > .row {
+  margin: 10px!important;
+}

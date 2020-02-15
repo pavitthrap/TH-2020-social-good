@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block mainbody %}
+
+
+    {% if g.user %}
+    <div class="container" style="padding-top: 100px">
+      <div id="new-post">
+        <div class="row">
+          <h1>Title: </h1> <!-- title info -->
+        </div>
+        <div class="row">
+          <h2>Subtitle: </h2> <!-- subtitle info -->
+        </div>
+        <div class="row">
+          <h2>Category: </h2> <!-- category info -->
+        </div>
+        <div class="img-display row">
+          <img src="###" alt="image"/>
+        </div>
+        <div class="row">
+          <form>
+            <div class="form-group">
+              <label for="answer">Example textarea</label>
+              <textarea class="form-control" id="answer" rows="3"></textarea>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+    {% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}

@@ -214,6 +214,13 @@ def create_app(test_config=None):
 		full_path = os.path.join(request.host_url, 'static', 'uploads', request.args['filename'])
 		return render_template('retina/query_display.html', screen_text=screen_text, display_image = full_path)
 
+	@app.route('/post_answer')
+	def post_answer():
+		screen_text = ""
+		sentiment=0.9
+		keywords= "retina"
+		return render_template('retina/post_answer.html', screen_text=screen_text)
+
 	@app.route('/upload_file', methods=['POST'])
 	def upload_file():
 		if request.method == 'POST':
@@ -242,7 +249,7 @@ def create_app(test_config=None):
 	@app.route('/user/<username>')
 	def user_profile(username):
 		db = get_db()
-		
+
 		user = db.execute(
             'SELECT * FROM user WHERE username = ?', (username,)
         ).fetchone()
@@ -253,7 +260,7 @@ def create_app(test_config=None):
 		return render_template('retina/user_profile.html', username=username, user_type=user_type,
 								user_picture_filename=user_picture_filename)
 
-	#@app.before_request	
+	#@app.before_request
 	@app.route('/', methods=('GET', 'POST'))
 	def index(screen_text="Unknown Caller", sentiment=0.9, keywords=7):
 	    # row = get_db().execute(

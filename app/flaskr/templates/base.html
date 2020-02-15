@@ -9,12 +9,12 @@
 
   <title>Retinaid</title>
 
-  <!-- Bootstrap core CSS 
+  <!-- Bootstrap core CSS
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   -->
   <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" type="text/css" rel="stylesheet">
 
-  <!-- Custom fonts for this template 
+  <!-- Custom fonts for this template
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="vendor/simple-line-icons/css/simple-line-icons.css">
   <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
@@ -28,14 +28,15 @@
   <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
 
 
-  <!-- Plugin CSS 
+  <!-- Plugin CSS
   <link rel="stylesheet" href="device-mockups/device-mockups.min.css">
   -->
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='device-mockups/device-mockups.min.css') }}">
 
-  <!-- Custom styles for this template 
+  <!-- Custom styles for this template
   <link href="css/new-age.min.css" type="text/css" rel="stylesheet">
   -->
+  <link href="{{ url_for('static', filename='css/style.css') }}" type="text/css" rel="stylesheet">
   <link href="{{ url_for('static', filename='css/new-age.min.css') }}" type="text/css" rel="stylesheet">
 
   <!--
@@ -63,7 +64,7 @@
             <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Log Out</a>
           {% else %}
             <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Log In</a>   
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Log In</a>
           {% endif %}
 
           <!--
@@ -117,10 +118,10 @@
     </header>
 
 
-  
-  
-  
-  
+
+
+
+
 
   <!-- Bootstrap core JavaScript -->
   <script src="vendor/jquery/jquery.min.js"></script>
@@ -133,4 +134,3 @@
   <script src="js/new-age.min.js"></script>
 
 </body>
-
