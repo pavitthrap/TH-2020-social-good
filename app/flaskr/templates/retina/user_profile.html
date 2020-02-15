@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block mainbody %}
+    <div class="container h-100">
+        <div class="row h-100">
+            <div class="col-lg-6 my-auto">
+                <img src="{{ url_for('static', filename = user_picture_filename) }}" style="width:80px; margin-bottom:30px" alt="User Icon">
+            </div>
+            <div class="col-lg-6 my-auto">
+                <h1>User: {{ username }}</h1>
+                <h4>{{ user_type }}</h4>
+                <h2>Badges</h2>
+                <h2>Global Rank</h2>
+            </div>
+        </div>
+    </div>
+{% endblock %}
