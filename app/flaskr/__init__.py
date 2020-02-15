@@ -5,6 +5,8 @@ import json
 import threading
 #from . import db
 
+from flaskr.db import get_db
+
 def after_this_request(f):
 	print("after called")
 	if not hasattr(g, 'after_request_callbacks'):
@@ -220,6 +222,31 @@ def create_app(test_config=None):
 		sentiment=0.9
 		keywords= "retina"
 		return render_template('retina/query_create.html', screen_text=screen_text, sentiment=sentiment, keywords=keywords)
+
+	@app.route('/user/<username>/query_view')
+	def view_user_queries(username):
+		# Fetch user queries from db
+		db = get_db()
+		user = db.execute(
+            'SELECT * FROM user WHERE username = ?', (username,)
+        ).fetchone()
+
+		user_queries = [''] # user['user_queries']
+		return render_template('retina/query_view.html', user_queries=user_queries)
+
+	@app.route('/user/<username>')
+	def user_profile(username):
+		db = get_db()
+		
+		user = db.execute(
+            'SELECT * FROM user WHERE username = ?', (username,)
+        ).fetchone()
+
+		user_type = "Seeker" # user['user_type']
+		user_picture_filename = "user_icon_2.png" # user['user_picture_filename']
+
+		return render_template('retina/user_profile.html', username=username, user_type=user_type,
+								user_picture_filename=user_picture_filename)
 
 	#@app.before_request	
 	@app.route('/', methods=('GET', 'POST'))
