@@ -243,8 +243,14 @@ def create_app(test_config=None):
             'SELECT * FROM user WHERE username = ?', (username,)
         ).fetchone()
 
-		user_queries = [''] # user['user_queries']
+		user_queries = {1: {'picture_filename':'user_icon_2.png',
+						'question':'what the heck',
+						'responses': ['peaches', 'yah', 'apple']},
+						2: {'picture_filename':'user_icon_2.png',
+						'question':'what dis',
+						'responses': ['bananas', 'bums', 'balligators']}} # user['user_queries']
 		return render_template('retina/query_view.html', user_queries=user_queries)
+
 	@app.route('/', methods=('GET', 'POST'))
 	def index(screen_text="Unknown Caller", sentiment=0.9, keywords=7):
 	    # row = get_db().execute(
