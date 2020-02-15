@@ -24,6 +24,13 @@
     {% if g.user %}
 
     <div class="container" style="padding-top: 100px">
+        <div style="text-align: center;">
+            <h1 class="top-heading"> Active Queries </h1>
+            {% if num_queries == 0 %}
+                <h1> Looks like there are no active queries. </h1>
+            {% endif %}
+        </div>
+       
         {% for query, top_answer, num_answers, color, query_id in user_queries %}
             {% set color_class = color+'box' %}
             {% if color=="green" %}

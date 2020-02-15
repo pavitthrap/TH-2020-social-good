@@ -242,10 +242,25 @@ def create_app(test_config=None):
 
 
 	@app.route('/vote_answer')
-	def vote_answer(query_id=0):
+	def vote_answer():
 		db = get_db()
 		create_fake_data()
+		query_id = request.args.get('query_id')
+		answer_id = request.args.get('answer_id')
+		up = request.args.get('up')
+		# print("UP", up)
+
+		# if answer_id != None:
+		#  	answer = db.execute('SELECT * FROM answer WHERE id = ?', (int(answer_id),)).fetchone()
+		#  	print(answer["content"], print(answer["upvotes"]))
+		#  	upvotes = answer["upvotes"]
+		#  	downvotes = answer["downvotes"]
+		#  	if up: db.execute('UPDATE answer SET upvotes = ? WHERE id = ?', (upvotes + 1, answer_id))
+		#  	else: db.execute('UPDATE answer SET downvotes = ? WHERE id = ?', (downvotes + 1, answer_id))
+
+		create_fake_data()
 		if request.method == 'POST':
+
 			# Put the answer in the db
 			answer = request.form['answer']
 			db.execute('INSERT INTO answer (upvotes, downvotes, query_id, content) VALUES ( ?, ?, ?, ?)',
@@ -275,13 +290,12 @@ def create_app(test_config=None):
 	    	'SELECT * FROM query'
 	    	).fetchone()
 
-		print(query)
 
 		query_answer_ids = query['answer_list'].split(',')
 		query_answers = []
 		for answer_id in query_answer_ids:
-			print(answer_id)
 			answer = db.execute('SELECT * FROM answer WHERE id = ?', (int(answer_id),)).fetchone()
+			print(answer_id, answer["upvotes"])
 			net_upvotes = answer['upvotes'] - answer['downvotes'] if answer!=None else 0
 			query_answers.append((answer, net_upvotes))
 		return render_template('retina/vote_answer.html', res=query, answers=query_answers, top_answer=query["top_answer"])
@@ -329,8 +343,13 @@ def create_app(test_config=None):
             'SELECT * FROM user WHERE username = ?', (username,)
         ).fetchone()
 
+
+		if user['query_list'] == '':
+			return render_template('retina/query_view.html', user_queries=[], num_queries=0)
+
 		user_query_ids = user['query_list'].split(',')
 		user_queries = []
+
 		for query_id in user_query_ids:
 			print(query_id)
 			query = db.execute('SELECT * FROM query WHERE id = ?', (int(query_id),)).fetchone()
@@ -341,7 +360,7 @@ def create_app(test_config=None):
 			query_id = int(query_id)
 			user_queries.append((query, top_answer, num_answers, color, query_id))
 
-		return render_template('retina/query_view.html', user_queries=user_queries)
+		return render_template('retina/query_view.html', user_queries=user_queries, num_queries=len(user_queries))
 
 	@app.route('/past_queries')
 	def past_queries():
@@ -355,6 +374,9 @@ def create_app(test_config=None):
             'SELECT * FROM user WHERE username = ?', (username,)
         ).fetchone()
 
+		if user['query_list'] == '':
+			return render_template('retina/past_queries.html', user_queries=[], num_queries=0)
+
 		user_query_ids = user['query_list'].split(',')
 		user_queries = []
 		for query_id in user_query_ids:
@@ -366,7 +388,7 @@ def create_app(test_config=None):
 			query_id = int(query_id)
 			user_queries.append((query, top_answer, num_answers, color, query_id))
 
-		return render_template('retina/past_queries.html', user_queries=user_queries)
+		return render_template('retina/past_queries.html', user_queries=user_queries, num_queries=len(user_queries))
 
 	@app.route('/profile', methods=('GET', 'POST'))
 	def user_profile():
