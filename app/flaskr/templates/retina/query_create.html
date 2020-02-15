@@ -21,15 +21,11 @@
     {% if g.user %}
         <div class="container h-100">
             <div class="row h-100">
-                <div class="col-lg-6 my-auto">
+                <div class="col-lg-12 my-auto">
                     <form action="/upload_file" method="post" enctype="multipart/form-data">
-                        Select image to upload:
-                        <input type="file" name="file" id="fileToUpload">
+                        <input type="file" name="file" id="fileToUpload" accept="image/*">
                         <input type="submit" value="Upload Image" name="submit">
                     </form>
-                </div>
-                <div class="col-lg-6 my-auto">
-                    other column
                 </div>
             </div>
         </div>
