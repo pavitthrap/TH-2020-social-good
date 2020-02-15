@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block mainbody %}
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+
+      var container = document.getElementByClass("query-view");
+      
+
+      $(function() {
+        $('input#main_text').bind('click', function() {
+          clicked = $(this).attr("text");
+          $.ajax({
+            type : 'POST',
+            url : "{{url_for('index')}}",
+            contentType: 'application/json;charset=UTF-8',
+            data : {'name': 'startdemo',},
+          }).delay(400).done(updateFunction);
+        });
+      })
+    </script>
+
+    {% if g.user %}
+
+    <div class="container query-view">
+      <!-- dynamically add query elements -->
+    </div>
+
+    {% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}

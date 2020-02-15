@@ -1,7 +1,7 @@
-import os 
+import os
 
-from flask import Flask, g, render_template, request, url_for
-import json 
+from flask import Flask, g, render_template, request, url_for, redirect
+import json
 import threading
 #from . import db
 
@@ -182,21 +182,22 @@ def get_db():
 
     return g.db
 
-
+def allowed_file(filename):
+	return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 def create_app(test_config=None):
-	# create and configure the app 
+	# create and configure the app
 	app = Flask(__name__, instance_relative_config=True)
 	app.config.from_mapping(
-		SECRET_KEY='dev', 
+		SECRET_KEY='dev',
 		DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
 	)
 
 	if test_config is None:
-		#load the instance config, if it exists, when not testing 
+		#load the instance config, if it exists, when not testing
 		app.config.from_pyfile('config.py', silent=True)
 	else:
-		#load the test config if passed in 
+		#load the test config if passed in
 		app.config.from_mapping(test_config)
 
 	# with app.app_context():
@@ -210,14 +211,14 @@ def create_app(test_config=None):
 	except OSError:
 		pass
 
-    # a simple page that says hello 
+    # a simple page that says hello
 	@app.route('/query_create')
 	def query_create():
 		screen_text = ""
 		sentiment=0.9
 		keywords= "retina"
 		return render_template('retina/query_create.html', screen_text=screen_text)
-	
+
 	@app.route('/query_display')
 	def query_display():
 		screen_text = ""
@@ -240,13 +241,13 @@ def create_app(test_config=None):
 				file.save(os.path.join(app.static_folder, 'uploads', file.filename))
 				return redirect(url_for('query_display', filename=file.filename))
 
-	#@app.before_request	
+	#@app.before_request
 	@app.route('/', methods=('GET', 'POST'))
 	def index(screen_text="Unknown Caller", sentiment=0.9, keywords=7):
 	    # row = get_db().execute(
 	    #         'SELECT * FROM status WHERE id = (SELECT MAX(id) FROM status);'
 	    #     ).fetchone()
-	    
+
 	    """Show all the posts, most recent first."""
 	    #print("show index")
 	    global demo, curr_text, analysis_result, keyword_result, sentiment_result
@@ -256,7 +257,7 @@ def create_app(test_config=None):
 	        g.state = 1
 	    if request.method == 'POST':
 	        print(request.form)
-	        
+
 	        request_JSON = request.data
 	        #print(request_JSON)
 	        #request_JSON = json.dumps(request_JSON)
@@ -285,9 +286,9 @@ def create_app(test_config=None):
 	        elif 'name=startdemo' == request_JSON or 'demo1.x' in request.form:
 	        	demo=True
 	        	counter = 0
-	        elif 'name=getupdate' == request_JSON: 
+	        elif 'name=getupdate' == request_JSON:
 	        	screen_text = curr_text
-	        elif 'seecall' in request.form: 
+	        elif 'seecall' in request.form:
 	        	g.state = 6
 	        	screen_text = curr_text
 	        # print("going to return")
