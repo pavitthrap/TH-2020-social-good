@@ -44,6 +44,8 @@ assert endpoint
 
 computervision_client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(subscription_key))
 
+category_tags = {"food_" : "Food", "drink_" : "Drinks", "text_menu" : "Text -- Menus", "text_sign" : "Text -- Sign", "animal_" : "Animal", "abstract_" : "Abstract"}
+
 def get_db():
     """Connect to the application's configured database. The connection
     is unique for each request and will be reused if this is called
@@ -324,11 +326,10 @@ def create_app(test_config=None):
 				timestamp  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
 				title = request.form.get('title')
 				subtitle = request.form.get('subtitle')
-				category = request.form.get('category')
 
 				db.execute(
 					'INSERT INTO query (author_id, created, title, subtitle, pic_filename, category) VALUES (?, ?, ?, ?, ?, ?)',
-					(session.get('user_id'), timestamp, title, subtitle, file.filename, category)
+					(session.get('user_id'), timestamp, title, subtitle, file.filename, '')
 				)
 				# Get query ID
 				query = db.execute('SELECT * FROM query WHERE title = ?', (title,)).fetchone()
@@ -336,12 +337,28 @@ def create_app(test_config=None):
 				# Generate machine description
 				print("===== Describe the local image =====")
 				local_image = open(file_path, "rb") 
-				description_features = ["categories"]
 				description_results = computervision_client.describe_image_in_stream(local_image)
+				local_image = open(file_path, "rb") 
+				description_features = ["categories"]
+				description_categories = computervision_client.analyze_image_in_stream(local_image, description_features)
+
+				image_category = "Miscellaneous"
+				if (len(description_categories.categories) > 0):
+					image_category = '{}'.format(description_categories.categories[0].name)
+					if image_category in category_tags:
+						image_category = category_tags[image_category]
+					else:
+						image_category = "Miscellaneous"
+
+				db.execute('UPDATE query SET category = ? WHERE id = ?', (image_category, query_id)).fetchone()
+
 				print("Description of local image: ")
+				description = ""
 				if (len(description_results.captions) == 0):
+					description = "None"
 					print("No description detected.")
 				else:
+					description = description_results.captions[0].text
 					print("Description: '{}'".format(description_results.captions[0].text))
 				db.execute(
 					'INSERT INTO answer (query_id, content, username) VALUES (?, ?, ?)',
@@ -353,8 +370,17 @@ def create_app(test_config=None):
 				db.execute(
 					'UPDATE query SET machine_answer_id = ? WHERE title = ?', (answer_id, title)
 				)
+				# query = db.execute('SELECT * FROM query WHERE id = ?', (query_id,)).fetchone()
+				# answer = db.execute('SELECT * FROM answer WHERE id = ?', (answer_id,)).fetchone()
+				# print(query)
+				# print(query['id'])
+				# print(query['machine_answer_id'])
+				# print(query['category'])
+				# print(answer)
+				# print(answer['id'])
+				# print(answer['content'])
 				db.commit()
-				return redirect(url_for('query_display', filename=file.filename))
+				return redirect(url_for('query_create'))
 
 	@app.route('/query_view')
 	def view_user_queries():
