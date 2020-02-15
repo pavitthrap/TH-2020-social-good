@@ -24,14 +24,14 @@
     {% if g.user %}
 
     <div class="container" style="padding-top: 100px">
-        {% for query, top_answer, num_answers, color in user_queries %}
+        {% for query, top_answer, num_answers, color, query_id in user_queries %}
             {% set color_class = color+'box' %}
             {% if color=="green" %}
-                {% set redirect= url_for('post_answer')   %}
+                {% set redirect= url_for('post_answer', query_id=query_id)   %}
             {% elif color=="red" %}
-                {% set redirect= url_for('view_answer') %}
+                {% set redirect= url_for('view_answer', query_id=query_id) %}
             {% elif color=="yellow" %}
-                {% set redirect= url_for('vote_answer')%}
+                {% set redirect= url_for('vote_answer', query_id=query_id)%}
             {% endif %}
             <div class="black-box {{color_class}}" onclick= "location.href= '{{redirect}}' ;">
                 <div class="row">

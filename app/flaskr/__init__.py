@@ -216,6 +216,7 @@ def create_app(test_config=None):
 	def view_answer():
 		query_id = request.args.get('query_id')
 
+		(print(query_id))
 		db = get_db()
 		create_fake_data()
 
@@ -327,7 +328,8 @@ def create_app(test_config=None):
 			num_answers = len(query['answer_list'].split(','))
 			query_answer_state = int(query['answer_state'])
 			color = 'red' if query_answer_state == 0 else 'yellow' if query_answer_state == 1 else 'green'
-			user_queries.append((query, top_answer, num_answers, color))
+			query_id = int(query_id)
+			user_queries.append((query, top_answer, num_answers, color, query_id))
 
 		return render_template('retina/query_view.html', user_queries=user_queries)
 
@@ -356,6 +358,30 @@ def create_app(test_config=None):
 
 		return render_template('retina/past_queries.html', user_queries=user_queries)
 
+	@app.route('/profile', methods=('GET', 'POST'))
+	def user_profile():
+		db = get_db()
+		create_fake_data()
+
+		username = g.user["username"]
+		user_type = "Seeker" if g.user['user_type']==0 else "Answerer"
+		print(g.user['profile_pic_filename'] )
+		profile_pic_filename = "user_icon_2.png" if g.user['profile_pic_filename'] == None else g.user['profile_pic_filename']
+		
+		user = db.execute(
+	            'SELECT * FROM user WHERE username = ?', (username,)
+	        ).fetchone()
+
+		user_query_ids = user['query_list'].split(',')
+		print(user_query_ids)
+		# Seeker profile
+		if g.user['user_type']==0:
+			return render_template('retina/user_profile.html', username=username, user_type=user_type,
+								user_picture_filename=profile_pic_filename, num_queries=len(user_query_ids))
+		else:
+			return render_template('retina/ans_user_profile.html', username=username, user_type=user_type,
+								user_picture_filename=profile_pic_filename, num_queries=len(user_query_ids))
+
 
 	@app.route('/', methods=('GET', 'POST'))
 	def index():
@@ -372,9 +398,6 @@ def create_app(test_config=None):
 
 	from flaskr import blog
 	app.register_blueprint(blog.bp)
-
-	from flaskr import user
-	app.register_blueprint(user.bp)
 
 	app.add_url_rule('/', endpoint='index')
 
