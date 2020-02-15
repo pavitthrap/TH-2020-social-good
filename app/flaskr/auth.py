@@ -17,18 +17,6 @@ def register():
         user_type = request.form['user_type']
         db = get_db()
 
-    	db.execute(
-    	    'INSERT INTO query (username, title, subtitle, answer, status) VALUES ("bob", "What is this object?", "I know that it is red...", "That object is an apple.", "Verfied")',
-    	    (username, generate_password_hash(password))
-    	)
-    	db.commit()
-
-    	print("executing")
-    	db.execute(
-    		'SELECT username, title, subtitle, answer, status FROM query',
-    		(username, generate_password_hash(password))
-    	)
-
         error = None
 
         if not username:
@@ -63,7 +51,6 @@ def login():
 
         # status
 
-
         error = None
         user = db.execute(
             'SELECT * FROM user WHERE username = ?', (username,)
@@ -94,6 +81,8 @@ def load_logged_in_user():
         g.user = get_db().execute(
             'SELECT * FROM user WHERE id = ?', (user_id,)
         ).fetchone()
+
+        print("USER", g.user.keys())
 
 @bp.route('/logout')
 def logout():

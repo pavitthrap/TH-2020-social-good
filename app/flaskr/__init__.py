@@ -135,16 +135,6 @@ def analyze_it(sentence, phrases):
     counter += len(m)
 
 
-##########################
-# speech_recognizer.recognizing.connect(lambda evt: update_curr_text(evt.result.text))
-# speech_recognizer.recognized.connect(lambda evt: analyze_speech(rec.join(evt.result.text)))
-# speech_recognizer.session_started.connect(lambda evt: print('SESSION STARTED: {}'.format(evt)))
-# speech_recognizer.session_stopped.connect(lambda evt: print('SESSION STOPPED {}'.format(evt)))
-# speech_recognizer.canceled.connect(lambda evt: print('CANCELED {}'.format(evt)))
-# stop continuous recognition on either session stopped or canceled events
-
-#################################################
-
 def sustain_speech():
     print("sustain called")
     speech_recognizer.start_continuous_recognition()
@@ -158,11 +148,6 @@ def stop_cb(evt):
     print('CLOSING on {}'.format(evt))
     speech_recognizer.stop_continuous_recognition()
     done = True
-
- ################################################
-
-# speech_recognizer.session_stopped.connect(stop_cb)
-# speech_recognizer.canceled.connect(stop_cb)
 
 
 
