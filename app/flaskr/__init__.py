@@ -64,83 +64,83 @@ def update_curr_text(text):
 
 ########################
 # Connect callbacks to the events fired by the speech recognizer
-rec = ""
-
-def analyze_speech(rec):
-    global counter, curr_text, sentiment_result
-    documents = {'documents' : [
-      {'id': '1', 'language': 'en', 'text': rec},
-    ]}
-
-    headers   = {'Ocp-Apim-Subscription-Key': subscription_key}
-    response  = requests.post(key_phrase_api_url, headers=headers, json=documents)
-    key_phrases = response.json()
-
-    for document in key_phrases["documents"]:
-        text    = next(iter(filter(lambda d: d["id"] == document["id"], documents["documents"])))["text"]
-        phrases = ",".join(document["keyPhrases"])
-        print("\n")
-        print("-----------Key Phrases Extracted: ", phrases)
-
-    analyze_it(rec, phrases)
-
-    response  = requests.post(senti_phrase_api_url, headers=headers, json=documents)
-    sentiment = response.json().get("documents")[0].get("score")
-    sentiment_result = sentiment
-
-    print("-----------Sentiment Analysis ", sentiment)
-    print("\n")
-
-    if abs(.5 - sentiment) >= .38:
-        counter +=1
-
-    total_analysis()
-
-
-def total_analysis():
-    global counter, analysis_result, keyword_result
-    print(counter)
-    if counter >= 6:
-        analysis_result = "HIGH RISK - NOTIFYING BANK"
-        print("-----------HIGH RISK ALERT - NOTIFYING BANK")
-        #HIGH RISK, NOTIFY BANK - DISPLAY HOW HIGH
-    elif counter >= 4:
-        analysis_result = "MEDIUM RISK - NOTIFYING BANK"
-        print("-----------MEDIUM RISK ALERT - NOTIFYING BANK")
-        #MEDIUM RISK
-    elif counter >= 2:
-        analysis_result = "LOW RISK - NOTIFYING BANK"
-        print("-----------LOW RISK ALERT - NOTIFYING BANK")
-        #
-    else:
-        analysis_result = "VERY LOW RISK"
-        print("-----------VERY LOW RISK")
-    keyword_result = counter
-    print("\n", analysis_result, "setting analysis", keyword_result)
-
-
-
-
-def analyze_it(sentence, phrases):
-    global counter
-    triggerWords = ['gift', 'cards', 'gift cards', 'IRS', 'warranty', 'Medicare', 'insurance', 'social',
-                    'social security', 'bank', 'routing', 'number', 'tax', 'dollars', 'owe',
-                    'business listing', 'fee', 'interest', 'interest rate', 'loans', 'overdue', 'debt'
-                    'verification', 'offer', 'limited time', 'important', 'urgent', 'credit', 'credit card',
-                    'cover up', 'viagra', 'anti-aging', 'metabolism', 'bitcoin', 'illegal', 'donation',
-                    'free vacation', 'free', 'loan', "you've won", 'low risk', 'free bonus', 'bonus',
-                    'payment', 'lottery', 'trust', 'investment', 'subscription', 'can you hear me?',
-                    'federal reserve', 'retirement', 'ROTH IRA', 'senior', '401k', 'tech support',
-                    'Mark Zuckerberg', 'safe', 'virus', 'password', 'safety', 'lucky', 'won', 'winner',
-                    'charity', 'pin number', 'pin', 'million', 'fraudulent activities']
-
-    for word in triggerWords:
-        if word.lower() in phrases.lower() or word.lower() in sentence.lower():
-            counter+=1
-
-    m = re.findall('([0-9]{2}[0-9]+)', sentence)
-    counter += len(m)
-
+# rec = ""
+#
+# def analyze_speech(rec):
+#     global counter, curr_text, sentiment_result
+#     documents = {'documents' : [
+#       {'id': '1', 'language': 'en', 'text': rec},
+#     ]}
+#
+#     headers   = {'Ocp-Apim-Subscription-Key': subscription_key}
+#     response  = requests.post(key_phrase_api_url, headers=headers, json=documents)
+#     key_phrases = response.json()
+#
+#     for document in key_phrases["documents"]:
+#         text    = next(iter(filter(lambda d: d["id"] == document["id"], documents["documents"])))["text"]
+#         phrases = ",".join(document["keyPhrases"])
+#         print("\n")
+#         print("-----------Key Phrases Extracted: ", phrases)
+#
+#     analyze_it(rec, phrases)
+#
+#     response  = requests.post(senti_phrase_api_url, headers=headers, json=documents)
+#     sentiment = response.json().get("documents")[0].get("score")
+#     sentiment_result = sentiment
+#
+#     print("-----------Sentiment Analysis ", sentiment)
+#     print("\n")
+#
+#     if abs(.5 - sentiment) >= .38:
+#         counter +=1
+#
+#     total_analysis()
+#
+#
+# def total_analysis():
+#     global counter, analysis_result, keyword_result
+#     print(counter)
+#     if counter >= 6:
+#         analysis_result = "HIGH RISK - NOTIFYING BANK"
+#         print("-----------HIGH RISK ALERT - NOTIFYING BANK")
+#         #HIGH RISK, NOTIFY BANK - DISPLAY HOW HIGH
+#     elif counter >= 4:
+#         analysis_result = "MEDIUM RISK - NOTIFYING BANK"
+#         print("-----------MEDIUM RISK ALERT - NOTIFYING BANK")
+#         #MEDIUM RISK
+#     elif counter >= 2:
+#         analysis_result = "LOW RISK - NOTIFYING BANK"
+#         print("-----------LOW RISK ALERT - NOTIFYING BANK")
+#         #
+#     else:
+#         analysis_result = "VERY LOW RISK"
+#         print("-----------VERY LOW RISK")
+#     keyword_result = counter
+#     print("\n", analysis_result, "setting analysis", keyword_result)
+#
+#
+#
+#
+# def analyze_it(sentence, phrases):
+#     global counter
+#     triggerWords = ['gift', 'cards', 'gift cards', 'IRS', 'warranty', 'Medicare', 'insurance', 'social',
+#                     'social security', 'bank', 'routing', 'number', 'tax', 'dollars', 'owe',
+#                     'business listing', 'fee', 'interest', 'interest rate', 'loans', 'overdue', 'debt'
+#                     'verification', 'offer', 'limited time', 'important', 'urgent', 'credit', 'credit card',
+#                     'cover up', 'viagra', 'anti-aging', 'metabolism', 'bitcoin', 'illegal', 'donation',
+#                     'free vacation', 'free', 'loan', "you've won", 'low risk', 'free bonus', 'bonus',
+#                     'payment', 'lottery', 'trust', 'investment', 'subscription', 'can you hear me?',
+#                     'federal reserve', 'retirement', 'ROTH IRA', 'senior', '401k', 'tech support',
+#                     'Mark Zuckerberg', 'safe', 'virus', 'password', 'safety', 'lucky', 'won', 'winner',
+#                     'charity', 'pin number', 'pin', 'million', 'fraudulent activities']
+#
+#     for word in triggerWords:
+#         if word.lower() in phrases.lower() or word.lower() in sentence.lower():
+#             counter+=1
+#
+#     m = re.findall('([0-9]{2}[0-9]+)', sentence)
+#     counter += len(m)
+#
 
 # def sustain_speech():
 #     print("sustain called")
@@ -188,7 +188,7 @@ def create_fake_data():
         ).fetchone()
 	if answer:
 		return query_ids
-	
+
 	# Create fake data
 	username = g.user['username']
 	db.execute(
@@ -228,9 +228,9 @@ def get_top_answer(answer_list):
 		if curr_num_votes >= 0 and max_num_votes < curr_num_votes:
 			max_answer_id = answer_id
 			max_num_votes = curr_num_votes
-	# returns None if no answer is found with a nonnegative number of upvotes 
+	# returns None if no answer is found with a nonnegative number of upvotes
 	return max_answer_id
-		
+
 
 def create_app(test_config=None):
 	# create and configure the app
@@ -262,9 +262,15 @@ def create_app(test_config=None):
 	@app.route('/query_create')
 	def query_create():
 		remote_image_url = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-sample-data-files/master/ComputerVision/Images/landmark.jpg"
+		
 		print("===== Describe the sample image =====")
 		# Call API
+		description_features = ["categories"]
 		description_results = computervision_client.describe_image(remote_image_url)
+		description_categories = computervision_client.analyze_image(remote_image_url, description_features)
+		print(description_results)
+		print("CATEGORIES\n")
+		print(description_categories)
 
 		# Get the captions (descriptions) from the response, with confidence level
 		print("Description of remote image: ")
