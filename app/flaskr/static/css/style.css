@@ -11,6 +11,7 @@
 .black-box {
   background-color: rgba(28, 22, 22, 0.26);
   margin: 10px!important;
+  border-radius: 25px;
 }
 
 
@@ -23,3 +24,13 @@ hr {
     padding: 0;
 }
 
+
+.top-heading {
+	font-weight: bold;
+  font-size: 80px;
+}
+
+.sec-heading {
+  font-weight: bold;
+  font-size: 50px;
+}
