@@ -7,16 +7,16 @@
     <div class="container" style="padding-top: 100px">
       <div id="new-post">
         <div class="row">
-          <h1>Title: </h1> <!-- title info -->
+          <h1>Title: {{ res.title }}</h1>
         </div>
         <div class="row">
-          <h2>Subtitle: </h2> <!-- subtitle info -->
+          <h2>Subtitle: {{ res.subtitle }}</h2> <!-- subtitle info -->
         </div>
         <div class="row">
-          <h2>Category: </h2> <!-- category info -->
+          <h2>Category: {{ res.category }}</h2> <!-- category info -->
         </div>
         <div class="img-display row">
-          <img src="###" alt="image"/>
+          <img src="{{ res.pic_filename }}" alt="image"/>
         </div>
         <div class="row">
           <form>
