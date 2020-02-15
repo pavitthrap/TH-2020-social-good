@@ -14,7 +14,23 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+
+
+        #TODO: get a succesful query
         db = get_db()
+
+    	db.execute(
+    	    'INSERT INTO query (username, title, subtitle, answer, status) VALUES ("bob", "What is this object?", "I know that it is red...", "That object is an apple.", "Verfied")',
+    	    (username, generate_password_hash(password))
+    	)
+    	db.commit()
+
+    	print("executing")
+    	db.execute(
+    		'SELECT username, title, subtitle, answer, status FROM query',
+    		(username, generate_password_hash(password))
+    	)
+
         error = None
 
         if not username:
@@ -45,7 +61,7 @@ def login():
         password = request.form['password']
         db = get_db()
 
-        # status 
+        # status
 
 
         error = None
@@ -95,5 +111,3 @@ def login_required(view):
         return view(**kwargs)
 
     return wrapped_view
-
-
