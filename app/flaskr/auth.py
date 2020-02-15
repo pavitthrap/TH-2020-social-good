@@ -82,7 +82,7 @@ def load_logged_in_user():
             'SELECT * FROM user WHERE id = ?', (user_id,)
         ).fetchone()
 
-        print("USER", g.user.keys())
+        #print("USER", g.user.keys())
 
 @bp.route('/logout')
 def logout():
