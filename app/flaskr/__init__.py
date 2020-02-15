@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, g, render_template, request, url_for
+from flask import Flask, g, render_template, request, url_for, redirect
 import json
 import threading
 #from . import db
@@ -182,7 +182,8 @@ def get_db():
 
     return g.db
 
-
+def allowed_file(filename):
+	return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 def create_app(test_config=None):
 	# create and configure the app
