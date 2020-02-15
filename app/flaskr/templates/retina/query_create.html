@@ -51,11 +51,11 @@
                         <form action="/upload_file" method="post" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Title</label>
-                                <input type="text" name = "title" class="form-control" placeholder="Enter image title" id="exampleInputEmail1">
+                                <input type="text" name = "title" class="form-control" placeholder="Enter image title" id="exampleInputEmail1" required>
                                 <label for="exampleInputEmail2" style="margin-top:20px;">Subtitle</label>
-                                <input type="text" name = "subtitle" class="form-control" placeholder="Enter image subtitle" id="exampleInputEmail2">
+                                <input type="text" name = "subtitle" class="form-control" placeholder="Enter image subtitle" id="exampleInputEmail2" required>
                                 <label for="exampleFormControlSelect1" style="margin-top:20px;">Category Select</label>
-                                <select class="form-control" name="category" id="category">
+                                <select class="form-control" name="category" id="category" required>
                                     <option value="food_">Food</option>
                                     <option value="drink_">Drink</option>
                                     <option value="text_menu">Menus</option>
@@ -63,7 +63,7 @@
                                     <option value="animal_">Animals</option>
                                     <option value="abstract_">Miscellaneous</option>
                                 </select>
-                                <input style="margin-top:20px;" type="file" name="file" id="fileToUpload" accept="image/*">
+                                <input style="margin-top:20px;" type="file" name="file" id="fileToUpload" accept="image/*" required>
                             </div>
                             <button type="submit" class="rnd-btn btn-primary mb-2">Upload Image</button>
                         </form>

@@ -63,7 +63,7 @@ def allowed_file(filename):
 def create_fake_data():
 	db = get_db()
 	query_ids = [3,1]
-	answer_ids = [3, 5, 2, 7]
+	answer_ids = [3, 5, 2, 7, 8, 9]
 
 	# Check to see if fake data's already been created
 	answer = db.execute(
@@ -71,7 +71,7 @@ def create_fake_data():
         ).fetchone()
 	if answer:
 		return query_ids
-
+	
 	# Create fake data
 	username = g.user['username']
 	db.execute(
@@ -79,27 +79,36 @@ def create_fake_data():
 	)
 	db.execute(
 	'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)',
-	(query_ids[0], 2, "Hello2", "Bob", "img.jpg", "hello", "3", "3,5")
+	(query_ids[0], 2, "What is the price", "Price below", "xbox_price.JPG", "price tag", "8", "8,9")
 	)
 	db.execute(
 	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
-	(answer_ids[0], 4, 2, 3, 'hoy', username)
+	(answer_ids[4], 8, 2, 3, '$399.99', "dave")
 	)
 	db.execute(
 	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
-	(answer_ids[1], 2, 4, 3, 'boy', username)
+	(answer_ids[5], 4, 4, 3, '$3990', "jane")
+	)
+	
+	db.execute(
+	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
+	(answer_ids[1], 4, 2, 1, 'apple spoiled', "bob")
+	)
+	db.execute(
+	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
+	(answer_ids[3], 2, 4, 1, 'boy', "tester")
 	)
 	db.execute(
 	'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list, machine_answer_id) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-	(query_ids[1], 2, "Cantelope", "Bobbyjoe", "img.jpg", "yoyo", "2", "2,4,5,6,7,9,8,21", answer_ids[3])
+	(query_ids[1], 2, "Is this apple bad", "apple below", "124687474-rotten-apple-on-a-white-background.jpg", "produce", "3", "3,5,2,7", answer_ids[3])
 	)
 	db.execute(
 	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
-	(answer_ids[2], 16, 3, query_ids[1], 'choy', username)
+	(answer_ids[0], 16, 3, query_ids[1], 'contains fungus', "helpful hank")
 	)
 	db.execute(
 	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
-	(answer_ids[3], 0, 0, query_ids[1], 'A house on the hill', "")
+	(answer_ids[2], 0, 0, query_ids[1], 'A house on the hill', "confused craig")
 	)
 	return query_ids
 
