@@ -5,7 +5,6 @@ import json
 import threading
 import datetime
 import time
-#from . import db
 
 from flaskr.db import get_db
 
@@ -170,11 +169,8 @@ def create_app(test_config=None):
 
 	@app.route('/query_display')
 	def query_display():
-		screen_text = ""
-		sentiment=0.9
-		keywords= "retina"
 		full_path = os.path.join(request.host_url, 'static', 'uploads', request.args['filename'])
-		return render_template('retina/query_display.html', screen_text=screen_text, display_image = full_path)
+		return render_template('retina/query_display.html', display_image = full_path)
 
 	@app.route('/post_answer', methods=('GET', 'POST'))
 	def post_answer(query_id=0):
@@ -310,14 +306,14 @@ def create_app(test_config=None):
 					(session.get('user_id'), timestamp, title, subtitle, file.filename, category)
 				)
 				db.commit()
-				return redirect(url_for('query_display', filename=file.filename))
+				return redirect(url_for('index'))
 
 	@app.route('/query_view')
 	def view_user_queries():
 		# Fetch user queries from db
 		db = get_db()
 
-		create_fake_data()
+		# create_fake_data()
 
 		username = g.user["username"]
 		user = db.execute(
