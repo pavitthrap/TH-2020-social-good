@@ -262,13 +262,14 @@ def create_app(test_config=None):
 		up = request.args.get('up')
 		# print("UP", up)
 
-		# if answer_id != None:
-		#  	answer = db.execute('SELECT * FROM answer WHERE id = ?', (int(answer_id),)).fetchone()
-		#  	print(answer["content"], print(answer["upvotes"]))
-		#  	upvotes = answer["upvotes"]
-		#  	downvotes = answer["downvotes"]
-		#  	if up: db.execute('UPDATE answer SET upvotes = ? WHERE id = ?', (upvotes + 1, answer_id))
-		#  	else: db.execute('UPDATE answer SET downvotes = ? WHERE id = ?', (downvotes + 1, answer_id))
+		if answer_id != None:
+			answer = db.execute('SELECT * FROM answer WHERE id = ?', (int(answer_id),)).fetchone()
+			#print(answer["content"], print(answer["upvotes"]))
+			upvotes = answer["upvotes"]
+			downvotes = answer["downvotes"]
+			if up: db.execute('UPDATE answer SET upvotes = ? WHERE id = ?', (upvotes + 1, answer_id))
+			else: db.execute('UPDATE answer SET downvotes = ? WHERE id = ?', (downvotes + 1, answer_id))
+		db.commit()
 
 		create_fake_data()
 		if request.method == 'POST':
