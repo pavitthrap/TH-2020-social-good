@@ -435,6 +435,8 @@ def create_app(test_config=None):
 
 	@app.route('/', methods=('GET', 'POST'))
 	def index():
+		if g.user is None:
+			return redirect(url_for('auth.login'))
 		if g.user["user_type"] == 0:
 			return render_template('blog/index.html')
 		elif g.user["user_type"] == 1:
