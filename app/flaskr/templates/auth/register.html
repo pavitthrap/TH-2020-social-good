@@ -12,12 +12,19 @@
         <div class="col-md-8 mx-auto">
           <h2 class="section-heading">Register</h2>
            <img src="{{ url_for('static', filename = 'register_icon.png') }}" style="width:80px; margin-bottom:30px" alt="User Icon">
-          <form method="post">
+      <form method="post">
 		    <label for="username">Username</label>
 		    <input name="username" id="username" required> <br>
-		    <label for="password">Password</label>
+		    
+        <label for="password">Password</label>
 		    <input type="password" name="password" id="password" required> <br>
-		    <input type="submit" value="Register">
+        
+        <input type="radio" id="Seeker" name="user_type" value="Seeker">
+        <label for="Seeker">Seeker</label><br>
+        <input type="radio" id="Answerer" name="user_type" value="Answerer">
+        <label for="Answerer">Answerer</label><br>
+		    
+        <input type="submit" value="Register">
 		  </form>
          
           

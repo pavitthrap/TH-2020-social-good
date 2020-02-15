@@ -14,9 +14,7 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-
-
-        #TODO: get a succesful query
+        user_type = request.form['user_type']
         db = get_db()
 
     	db.execute(
@@ -37,6 +35,8 @@ def register():
             error = 'Username is required.'
         elif not password:
             error = 'Password is required.'
+        elif not user_type:
+            error = "User type is required."
         elif db.execute(
             'SELECT id FROM user WHERE username = ?', (username,)
         ).fetchone() is not None:
@@ -44,8 +44,8 @@ def register():
 
         if error is None:
             db.execute(
-                'INSERT INTO user (username, password) VALUES (?, ?)',
-                (username, generate_password_hash(password))
+                'INSERT INTO user (username, password, user_type, query_list) VALUES (?, ?, ?, ?)',
+                (username, generate_password_hash(password), 0, "")
             )
             db.commit()
             return redirect(url_for('auth.login'))

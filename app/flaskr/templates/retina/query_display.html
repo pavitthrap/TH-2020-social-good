@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block mainbody %}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+
+      $(function() {
+        $('input#main_text').bind('click', function() {
+          clicked = $(this).attr("text");
+          $.ajax({
+            type : 'POST',
+            url : "{{url_for('index')}}",
+            contentType: 'application/json;charset=UTF-8',
+            data : {'name': 'startdemo',},
+          }).delay(400).done(updateFunction);
+        });
+      })
+    </script>
+
+    {% if g.user %}
+
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-lg-12 my-auto">
+                    <img src="{{ display_image }}" alt="Display Image">
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}
