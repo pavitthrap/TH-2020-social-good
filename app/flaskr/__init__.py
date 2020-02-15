@@ -216,10 +216,17 @@ def create_app(test_config=None):
 
 	@app.route('/post_answer')
 	def post_answer():
+		db = get_db()
+		db.execute(
+		'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)',
+		(3, 2, "Hello2", "Bob", "img.jpg", "hello", "yo", "whut")
+		)
+		res = db.execute('SELECT * FROM query').fetchone()
+		print(res)
 		screen_text = ""
 		sentiment=0.9
 		keywords= "retina"
-		return render_template('retina/post_answer.html', screen_text=screen_text)
+		return render_template('retina/post_answer.html', res=res, screen_text=screen_text)
 
 	@app.route('/upload_file', methods=['POST'])
 	def upload_file():
