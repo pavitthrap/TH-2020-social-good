@@ -6,3 +6,20 @@
 #new-post > .row {
   margin: 10px!important;
 }
+
+
+.black-box {
+  background-color: rgba(28, 22, 22, 0.26);
+  margin: 10px!important;
+}
+
+
+hr {
+    display: block;
+    height: 5px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+

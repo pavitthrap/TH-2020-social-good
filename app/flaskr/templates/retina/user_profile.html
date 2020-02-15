@@ -2,15 +2,42 @@
 
 {% block mainbody %}
     <div class="container h-100">
-        <div class="row h-100">
-            <div class="col-lg-6 my-auto">
-                <img src="{{ url_for('static', filename = user_picture_filename) }}" style="width:80px; margin-bottom:30px" alt="User Icon">
+        <div class="row" style="text-align: center;">
+            <div class="col-lg-12 my-auto" >
+                <div style="height: 50px"> </div>
+                <img src="{{ url_for('static', filename = user_picture_filename) }}" style="width:250px; " alt="User Icon">
+                <h1 style="font-weight: bold;">{{ username }}</h1>
+                <h2>{{ user_type }}</h2>
             </div>
-            <div class="col-lg-6 my-auto">
-                <h1>User: {{ username }}</h1>
-                <h4>{{ user_type }}</h4>
-                <h2>Badges</h2>
-                <h2>Global Rank</h2>
+        </div>
+        <div class="black-box" style="text-align: center; padding: 40px">
+            <div class="row"  >
+                <div class="col-md-6">
+                    <h2 style="font-weight: bold;">Global Rank</h2>
+                    <h4> 1343/25000 </h4>
+                </div>
+
+                <div class="col-md-6">
+                    <h2 style="font-weight: bold;">Country Rank</h2>
+                    <h4> 56/2004 </h4>
+                </div>
+            </div>
+            <hr style="border-color: white">
+      
+            <h2 style="font-weight: bold;">Badges</h2>
+            <div class="row"> 
+                <div class="col-md-3">
+                    <img src="{{ url_for('static', filename = 'folder.png') }}" style="width:100px; " alt="User Icon">
+                </div>
+                 <div class="col-md-3">
+                    <img src="{{ url_for('static', filename = 'love.png') }}" style="width:100px; " alt="User Icon">
+                </div>
+                <div class="col-md-3">
+                    <img src="{{ url_for('static', filename = 'report.svg') }}" style="width:100px; " alt="User Icon">
+                </div>
+                <div class="col-md-3">
+                    <img src="{{ url_for('static', filename = 'strawberry.png') }}" style="width:100px; " alt="User Icon">
+                </div>
             </div>
         </div>
     </div>
