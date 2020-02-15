@@ -6,13 +6,13 @@
     {% if g.user_type==0 %}
     <div id="seeker-main" class="container" style="padding-top: 100px">
       <div class="row" style="margin-top: 100px">
-        <button class="btn btn-primary btn-main active" onclick="window.location.href = '{{url_for('query_create')}}';"aria-pressed="true">
-          <span style="margin: 50px">New Queries</span>
+        <button class="rnd-btn btn-primary btn-main active" style="background-color: #fdcc52; border-color:  #fdcc52;" onclick="window.location.href = '{{url_for('query_create')}}';"aria-pressed="true">
+          <span style="margin: 50px">New Query</span>
         </button>
       </div>
 
       <div class="row">
-        <button class="btn btn-primary btn-main active" onclick="window.location.href = '{{url_for('past_queries', username=g.user.username)}}';" aria-pressed="true">
+        <button class="rnd-btn btn-primary btn-main active" style="background-color: #fdcc52; border-color:  #fdcc52; margin-top:30px" onclick="window.location.href = '{{url_for('past_queries', username=g.user.username)}}';" aria-pressed="true">
           <span style="margin: 50px">Previous Queries</span>
         </button>
       </div>

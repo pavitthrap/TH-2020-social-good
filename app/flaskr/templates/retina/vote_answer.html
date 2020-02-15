@@ -33,13 +33,17 @@
                     </div>
                     <div class="col-md-1"> 
                       <div class=row> 
-                         <img src="{{ url_for('static', filename = 'chevron-arrow-up.svg') }}" style="width:50px; " alt="Up arrow">
+                         <a href="{{ url_for('vote_answer', query_id=res.id , answer_id = curr_answer.id, up=1) }}">
+                           <img src="{{ url_for('static', filename = 'chevron-arrow-up.svg') }}" style="width:50px; " alt="Up arrow">
+                         </a>
                       </div>
                       <div class=row> 
                         <h5 style="margin-left:15px">{{net_upvotes}} </h5>
                       </div>
                       <div class=row> 
-                        <img src="{{ url_for('static', filename = 'down.svg') }}" style="width:50px; " alt="Down arrow">
+                         <a href="{{ url_for('vote_answer', query_id=res.id , answer_id = curr_answer.id, up=0) }}">
+                           <img src="{{ url_for('static', filename = 'down.svg') }}" style="width:50px; " alt="Down arrow" >
+                         </a>
                       </div>
                     </div>
                     <div class="col-md-9" style="padding-top:15px;"> 
