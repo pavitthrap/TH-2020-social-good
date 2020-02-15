@@ -407,7 +407,7 @@ def create_app(test_config=None):
 		# Fetch user queries from db
 		db = get_db()
 
-		create_fake_data()
+		# create_fake_data()
 
 		username = g.user["username"]
 		user = db.execute(
