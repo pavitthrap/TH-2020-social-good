@@ -23,8 +23,22 @@
             <div class="row h-100">
                 <div class="col-lg-12 my-auto">
                     <form action="/upload_file" method="post" enctype="multipart/form-data">
-                        <input type="file" name="file" id="fileToUpload" accept="image/*">
-                        <input type="submit" value="Upload Image" name="submit">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Title</label>
+                            <input type="text" name = "title" class="form-control" placeholder="Enter image title" id="exampleInputEmail1">
+                            <label for="exampleInputEmail2">Subtitle</label>
+                            <input type="text" name = "subtitle" class="form-control" placeholder="Enter image subtitle" id="exampleInputEmail2">
+                            <label for="exampleFormControlSelect1">Category Select</label>
+                            <select class="form-control" name="category" id="category">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                            <input type="file" name="file" id="fileToUpload" accept="image/*">
+                        </div>
+                        <button type="submit" class="btn btn-primary mb-2">Upload Image</button>
                     </form>
                 </div>
             </div>

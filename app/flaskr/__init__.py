@@ -1,8 +1,10 @@
 import os
 
-from flask import Flask, g, render_template, request, url_for, redirect
+from flask import Flask, g, render_template, request, url_for, redirect, session
 import json
 import threading
+import datetime
+import time
 #from . import db
 
 from flaskr.db import get_db
@@ -240,6 +242,18 @@ def create_app(test_config=None):
 				return redirect(request.url)
 			if file and allowed_file(file.filename):
 				file.save(os.path.join(app.static_folder, 'uploads', file.filename))
+
+				db = get_db()
+				timestamp  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+				title = request.form.get('title')
+				subtitle = request.form.get('subtitle')
+				category = request.form.get('category')
+
+				db.execute(
+					'INSERT INTO query (author_id, created, title, subtitle, pic_filename, category) VALUES (?, ?, ?, ?, ?, ?)',
+					(session.get('user_id'), timestamp, title, subtitle, file.filename, category)
+				)
+				db.commit()
 				return redirect(url_for('query_display', filename=file.filename))
 
 	@app.route('/user/<username>/query_view')
