@@ -175,11 +175,59 @@ def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 def create_fake_data():
-    db = get_db()
-    db.execute(
-        'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)',
-        (3, 2, "Hello2", "Bob", "img.jpg", "hello", "yo", "whut")
-        )
+	db = get_db()
+	query_ids = [3,1]
+	answer_ids = [3, 5, 2]
+
+	# Check to see if fake data's already been created
+	answer = db.execute(
+            'SELECT * FROM answer WHERE id = ?', (answer_ids[0],)
+        ).fetchone()
+	if answer:
+		return query_ids
+	
+	# Create fake data
+	username = g.user['username']
+	db.execute(
+		'UPDATE user SET query_list = ? WHERE username = ?', ("1,3", username)
+	)
+	db.execute(
+	'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)',
+	(query_ids[0], 2, "Hello2", "Bob", "img.jpg", "hello", "3", "3,5")
+	)
+	db.execute(
+	'INSERT INTO answer (id, upvotes, downvotes, query_id, content) VALUES ( ?, ?, ?, ?, ?)',
+	(answer_ids[0], 4, 2, 3, 'hoy')
+	)
+	db.execute(
+	'INSERT INTO answer (id, upvotes, downvotes, query_id, content) VALUES ( ?, ?, ?, ?, ?)',
+	(answer_ids[1], 2, 4, 3, 'boy')
+	)
+	db.execute(
+	'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)',
+	(query_ids[1], 2, "Cantelope", "Bobbyjoe", "img.jpg", "yoyo", "2", "2,4,5,6,7,9,8,21")
+	)
+	db.execute(
+	'INSERT INTO answer (id, upvotes, downvotes, query_id, content) VALUES ( ?, ?, ?, ?, ?)',
+	(answer_ids[2], 16, 3, 1, 'choy')
+	)
+	return query_ids
+
+def get_top_answer(answer_list):
+	db = get_db()
+	max_answer_id = None
+	max_num_votes = -1
+	for answer_id in answer_list.split(','):
+		answer = db.execute(
+            'SELECT * FROM answer WHERE id = ?', (int(answer_id),)
+        ).fetchone()
+		curr_num_votes = answer['upvotes'] - answer['downvotes']
+		if curr_num_votes >= 0 and max_num_votes < curr_num_votes:
+			max_answer_id = answer_id
+			max_num_votes = curr_num_votes
+	# returns None if no answer is found with a nonnegative number of upvotes 
+	return max_answer_id
+		
 
 def create_app(test_config=None):
 	# create and configure the app
@@ -223,15 +271,35 @@ def create_app(test_config=None):
 	@app.route('/post_answer', methods=('GET', 'POST'))
 	def post_answer(query_id=0):
 		db = get_db()
-		# create_fake_data()
+		query_ids = create_fake_data()
+		query_id = query_ids[0]
 		if request.method == 'POST':
+			# Put the answer in the db
 			answer = request.form['answer']
+			db.execute('INSERT INTO answer (upvotes, downvotes, query_id, content) VALUES ( ?, ?, ?, ?)',
+						(0, 0, query_id, answer))
+			answer= db.execute('SELECT * FROM answer WHERE content = ?',
+						(answer,)).fetchone()
+			answer_id = answer['id']
 
-			# TODO: put the answer in the DB 
-			# TODO: update the query to add this answer id to it 
-			# TODO: return to the home feed for posts 
-			# TODO: add query_state field for the query 
+			# Update the corresponding query's answer_list and top_answer fields as appropriate
+			query = db.execute('SELECT * FROM query WHERE id = ?', (query_id,)).fetchone()
+			new_answer_list = query['answer_list'] + ',' + str(answer_id)
+			new_query_state = 0 # unanswered
+			db.execute(
+				'UPDATE query SET answer_list = ?, answer_state = ? WHERE id = ?', (new_answer_list, new_query_state, query_id)
+			)
+			top_answer_id = get_top_answer(new_answer_list)
+			if top_answer_id is not None:
+				db.execute(
+					'UPDATE query SET top_answer = ? WHERE id = ?', (str(top_answer_id), query_id)
+				)
 			return render_template('retina/query_create.html')
+
+		# TODO: uncommen below
+		# query = db.execute(
+	    # 	'SELECT * FROM query WHERE id = ?', (query_id,)
+	    # 	).fetchone()
 
 		# query = db.execute(
 		#    	'SELECT * FROM query WHERE id = ?', (query_id,)
@@ -332,34 +400,9 @@ def create_app(test_config=None):
 	@app.route('/query_view')
 	def view_user_queries():
 		# Fetch user queries from db
-		username = g.user['username']
 		db = get_db()
 
-		# TODO: Remove these temporary entries
-		db.execute(
-			'UPDATE user SET query_list = ? WHERE username = ?', ("1,3", username)
-		)
-		db.execute(
-		'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)',
-		(3, 2, "Hello2", "Bob", "img.jpg", "hello", "3", "3,5")
-		)
-		db.execute(
-		'INSERT INTO answer (id, upvotes, downvotes, query_id, content) VALUES ( ?, ?, ?, ?, ?)',
-		(3, 4, 2, 3, 'hoy')
-		)
-		db.execute(
-		'INSERT INTO answer (id, upvotes, downvotes, query_id, content) VALUES ( ?, ?, ?, ?, ?)',
-		(5, 2, 4, 3, 'boy')
-		)
-		db.execute(
-		'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)',
-		(1, 2, "Cantelope", "Bobbyjoe", "img.jpg", "yoyo", "2", "2,4,5,6,7,9,8,21")
-		)
-		db.execute(
-		'INSERT INTO answer (id, upvotes, downvotes, query_id, content) VALUES ( ?, ?, ?, ?, ?)',
-		(2, 16, 3, 1, 'choy')
-		)
-		# END TODO
+		create_fake_data()
 
 		user = db.execute(
             'SELECT * FROM user WHERE username = ?', (username,)
@@ -372,7 +415,8 @@ def create_app(test_config=None):
 			query = db.execute('SELECT * FROM query WHERE id = ?', (int(query_id),)).fetchone()
 			top_answer = db.execute('SELECT * FROM answer WHERE id = ?', (int(query['top_answer']),)).fetchone()
 			num_answers = len(query['answer_list'].split(','))
-			color = 'red' if num_answers < 4 else 'yellow' if num_answers < 8 else 'green'
+			query_answer_state = int(query['answer_state'])
+			color = 'red' if query_answer_state == 0 else 'yellow' if query_answer_state == 1 else 'green'
 			user_queries.append((query, top_answer, num_answers, color))
 
 		return render_template('retina/query_view.html', user_queries=user_queries)
