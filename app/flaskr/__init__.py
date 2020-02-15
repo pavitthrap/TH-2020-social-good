@@ -346,8 +346,8 @@ def create_app(test_config=None):
 
 				#TODO - add username
 				db.execute(
-					'INSERT INTO query (author_id, created, title, subtitle, pic_filename, category) VALUES (?, ?, ?, ?, ?, ?)',
-					(session.get('user_id'), timestamp, title, subtitle, file.filename, '')
+					'INSERT INTO query (author_id, created, title, subtitle, pic_filename, category, top_answer) VALUES (?, ?, ?, ?, ?, ?)',
+					(session.get('user_id'), timestamp, title, subtitle, file.filename, '', '0')
 				)
 
 				# Get query ID
@@ -394,7 +394,7 @@ def create_app(test_config=None):
 				)
 
 				# Update user query list
-				user = db.execute('SELECT * FROM user WHERE username = ?', (g.user['username'],))
+				user = db.execute('SELECT * FROM user WHERE username = ?', (g.user['username'],)).fetchone()
 				if user['query_list'] == "":
 					new_query_list = str(query_id)
 				else:
