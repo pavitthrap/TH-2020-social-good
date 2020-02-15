@@ -239,20 +239,6 @@ def create_app(test_config=None):
 		user_queries = [''] # user['user_queries']
 		return render_template('retina/query_view.html', user_queries=user_queries)
 
-	@app.route('/user/<username>')
-	def user_profile(username):
-		db = get_db()
-		
-		user = db.execute(
-            'SELECT * FROM user WHERE username = ?', (username,)
-        ).fetchone()
-
-		user_type = "Seeker" # user['user_type']
-		user_picture_filename = "user_icon_2.png" # user['user_picture_filename']
-
-		return render_template('retina/user_profile.html', username=username, user_type=user_type,
-								user_picture_filename=user_picture_filename)
-
 	#@app.before_request	
 	@app.route('/', methods=('GET', 'POST'))
 	def index(screen_text="Unknown Caller", sentiment=0.9, keywords=7):
@@ -322,6 +308,10 @@ def create_app(test_config=None):
 
 	from flaskr import blog
 	app.register_blueprint(blog.bp)
+
+	from flaskr import user
+	app.register_blueprint(user.bp)
+
 	app.add_url_rule('/', endpoint='index')
 
 	@app.before_first_request

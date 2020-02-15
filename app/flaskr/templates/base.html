@@ -58,7 +58,7 @@
         <ul class="navbar-nav ml-auto">
           {% if g.user %}
             {% if g.user_type==0 %}
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.profile') }}">Profile</a>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('user.user_profile') }}">Profile</a>
             {% endif %}
             <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Log Out</a>
           {% else %}

@@ -30,10 +30,12 @@ def register():
         ).fetchone() is not None:
             error = 'User {} is already registered.'.format(username)
 
+
+        user_type_enum = 0 if user_type=="Seeker" else 1
         if error is None:
             db.execute(
                 'INSERT INTO user (username, password, user_type, query_list) VALUES (?, ?, ?, ?)',
-                (username, generate_password_hash(password), 0, "")
+                (username, generate_password_hash(password), user_type_enum, "")
             )
             db.commit()
             return redirect(url_for('auth.login'))
@@ -81,8 +83,7 @@ def load_logged_in_user():
         g.user = get_db().execute(
             'SELECT * FROM user WHERE id = ?', (user_id,)
         ).fetchone()
-
-        print("USER", g.user.keys())
+        g.user_type = g.user['user_type']
 
 @bp.route('/logout')
 def logout():
