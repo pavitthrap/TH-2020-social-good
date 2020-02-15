@@ -26,6 +26,7 @@ CREATE TABLE query (
   category TEXT NOT NULL,
   top_answer TEXT,
   answer_list TEXT,
+  answer_state INTEGER DEFAULT 0,
   FOREIGN KEY (author_id) REFERENCES user (id)
 );
 
@@ -33,7 +34,8 @@ CREATE TABLE answer (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   upvotes INTEGER DEFAULT 0,
   downvotes INTEGER DEFAULT 0,
-  query_id INTEGER NOT NULL
+  query_id INTEGER NOT NULL,
+  content TEXT NOT NULL
 );
 
 CREATE TABLE status (
