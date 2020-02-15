@@ -44,7 +44,6 @@ assert endpoint
 
 computervision_client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(subscription_key))
 
-
 def get_db():
     """Connect to the application's configured database. The connection
     is unique for each request and will be reused if this is called
@@ -73,7 +72,7 @@ def create_fake_data():
         ).fetchone()
 	if answer:
 		return query_ids
-	
+
 	# Create fake data
 	username = g.user['username']
 	db.execute(
@@ -117,9 +116,9 @@ def get_top_answer(answer_list):
 		if curr_num_votes >= 0 and max_num_votes < curr_num_votes:
 			max_answer_id = answer_id
 			max_num_votes = curr_num_votes
-	# returns None if no answer is found with a nonnegative number of upvotes 
+	# returns None if no answer is found with a nonnegative number of upvotes
 	return max_answer_id
-		
+
 
 def create_app(test_config=None):
 	# create and configure the app
@@ -151,9 +150,15 @@ def create_app(test_config=None):
 	@app.route('/query_create')
 	def query_create():
 		remote_image_url = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-sample-data-files/master/ComputerVision/Images/landmark.jpg"
+		
 		print("===== Describe the sample image =====")
 		# Call API
+		description_features = ["categories"]
 		description_results = computervision_client.describe_image(remote_image_url)
+		description_categories = computervision_client.analyze_image(remote_image_url, description_features)
+		print(description_results)
+		print("CATEGORIES\n")
+		print(description_categories)
 
 		# Get the captions (descriptions) from the response, with confidence level
 		print("Description of remote image: ")
