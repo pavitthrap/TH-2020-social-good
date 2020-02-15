@@ -181,6 +181,21 @@ def create_fake_data():
         (3, 2, "Hello2", "Bob", "img.jpg", "hello", "yo", "whut")
         )
 
+def get_top_answer(answer_list):
+	max_answer_id = None
+	max_num_votes = -1
+	for answer_id in new_answer_list.split(','):
+		answer = db.execute(
+            'SELECT * FROM answer WHERE id = ?', (int(answer_id),)
+        ).fetchone()
+		curr_num_votes = answer['upvotes'] - answer['downvotes']
+		if curr_num_votes >= 0 and max_num_votes < curr_num_votes:
+			max_answer_id = answer_id
+			max_num_votes = curr_num_votes
+	# returns None if no answer is found with a nonnegative number of upvotes 
+	return max_answer_id
+		
+
 def create_app(test_config=None):
 	# create and configure the app
 	app = Flask(__name__, instance_relative_config=True)
@@ -223,18 +238,34 @@ def create_app(test_config=None):
 	@app.route('/post_answer', methods=('GET', 'POST'))
 	def post_answer(query_id=0):
 		db = get_db()
-		# create_fake_data()
+		create_fake_data()
 		if request.method == 'POST':
+			# Put the answer in the db
 			answer = request.form['answer']
+			db.execute('INSERT INTO answer (upvotes, downvotes, query_id, content) VALUES ( ?, ?, ?, ?)',
+						(0, 0, query_id, answer))
 
-			# TODO: put the answer in the DB 
-			# TODO: update the query to add this answer id to it 
-			# TODO: return to the home feed for posts 
-			# TODO: add query_state field for the query 
-			return render_template('retina/post_answer.html', res=query, screen_text=screen_text)
+			# Update the corresponding query's answer_list and top_answer fields as appropriate
+			query = db.execute('SELECT * FROM query WHERE id = ?', (query_id,)).fetchone()
+			new_answer_list = query['answer_list'] + ',' + str(query_id)
+			new_query_state = 0 # unanswered
+			db.execute(
+				'UPDATE query SET answer_list = ?, answer_state = ? WHERE id = ?', (new_answer_list, new_query_state, query_id)
+			)
+			top_answer_id = get_top_answer(new_answer_list)
+			if top_answer_id not None:
+				db.execute(
+					'UPDATE query SET top_answer = ? WHERE id = ?', (str(top_answer_id), query_id)
+				)
+			return render_template('retina/query_create.html')
+
+		# TODO: uncommen below
+		# query = db.execute(
+	    # 	'SELECT * FROM query WHERE id = ?', (query_id,)
+	    # 	).fetchone()
 
 		query = db.execute(
-	    	'SELECT * FROM query WHERE id = ?', (query_id,)
+	    	'SELECT * FROM query'
 	    	).fetchone()
 
 		print(query)
@@ -317,7 +348,8 @@ def create_app(test_config=None):
 			query = db.execute('SELECT * FROM query WHERE id = ?', (int(query_id),)).fetchone()
 			top_answer = db.execute('SELECT * FROM answer WHERE id = ?', (int(query['top_answer']),)).fetchone()
 			num_answers = len(query['answer_list'].split(','))
-			color = 'red' if num_answers < 4 else 'yellow' if num_answers < 8 else 'green'
+			query_answer_state = int(query['answer_state'])
+			color = 'red' if query_answer_state == 0 else 'yellow' if query_answer_state == 1 else 'green'
 			user_queries.append((query, top_answer, num_answers, color))
 
 		return render_template('retina/query_view.html', user_queries=user_queries)
