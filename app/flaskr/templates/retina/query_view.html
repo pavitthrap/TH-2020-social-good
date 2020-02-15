@@ -24,19 +24,33 @@
     {% if g.user %}
 
     <div class="container" style="padding-top: 100px">
-        {% for query in user_queries %}
-            <div id="new-post">
+        {% for query, top_answer, num_answers, color in user_queries %}
+            {% set color_class = color+'box' %}
+            {% if color=="green" %}
+                {% set redirect= url_for('post_answer')   %}
+            {% elif color=="red" %}
+                {% set redirect= url_for('view_answer') %}
+            {% elif color=="yellow" %}
+                {% set redirect= url_for('vote_answer')%}
+            {% endif %}
+            <div class="black-box {{color_class}}" onclick= "location.href= '{{redirect}}' ;">
                 <div class="row">
+                    <div class="col-md-1"> </div>
                     <div class="col-md-2" style="padding-top: 15px">
-                        <img src="{{ url_for('static', filename = query.pic_filename) }}" style="width:80px; margin-bottom:30px" alt="User Icon">
+                        <img src="{{ url_for('static', filename = query.pic_filename) }}" style="width:80px; margin-bottom:30px" alt="Query Picture">
+                        <h6 class="caps_class"> CATEGORY: {{ query.category }}</h6>
                     </div>
-                    <div class="col-md-10" style="padding-top: 10px">
+                    <div class="col-md-7" style="padding-top: 10px">
                         <div class="row">
-                            <h1> {{ query.title }} </h1>
+                            <h1 class="query-heading"> {{ query.title }} </h1>
                         </div>
                         <div class="row">
-                            <h3> Top Response: {{ query.top_answer }}</h3>
+                            <h3> Top Response: {{ top_answer.content }}</h3>
                         </div>
+                    </div>
+                    <div class="col-md-2" style="padding-top: 15px">
+                        <h1 >{{ num_answers }} </h1>
+                        <h2>comments </h2>
                     </div>
                 </div>
             </div>
