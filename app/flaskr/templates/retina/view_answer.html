@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block mainbody %}
+
+
+    {% if g.user %}
+    <div class="container" style="padding-top: 100px">
+      <div style="text-align: center;">
+        <h1 class="top-heading"> View Answer </h1>
+      </div>
+      <div class="black-box">
+        <div class="row">
+          <div class="col-md-12" style="padding:45px">
+            <h1 class="sec-heading">Title: {{ res.title }}</h1>
+            <h2>Subtitle: {{ res.subtitle }}</h2> <!-- subtitle info -->
+            <h2>Category: {{ res.category }}</h2> <!-- category info -->
+            <div class="img-display" >
+              <img src="{{ request.url_root + 'static/uploads/' + res.pic_filename }}"  alt="image for the query"/>
+            </div>
+          </div>
+        </div>
+        
+       
+        <div class="row">
+          <div class="col-md-1">
+          </div>
+          <div class="col-md-10">
+            <div class="vote-divider"> </div>
+              <h2 class="caps_class" style="padding-top: 15px;">MACHINE RESULT </h2>
+              <h4 style="padding-left:20px">{{ machine_answer["content"] }} </h4>
+            <div class="vote-divider"> </div>
+              <h2 class="caps_class" style="padding-top: 15px;">TOP USER ANSWER </h2>
+              <h4 style="padding-left:20px">{{ top_answer["content"] }} </h4>
+          </div>
+          <div class="col-md-1">
+          </div>
+        </div>
+
+        <div class="row" style="height: 30px;">  </div>
+
+      </div>
+    </div>
+
+
+    {% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}
