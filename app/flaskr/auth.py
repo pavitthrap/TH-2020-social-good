@@ -36,7 +36,7 @@ def register():
             db.execute(
                 'INSERT INTO user (username, password, user_type, query_list) VALUES (?, ?, ?, ?)',
                 (username, generate_password_hash(password), user_type_enum, "")
-            )
+            )    
             db.commit()
             return redirect(url_for('auth.login'))
 

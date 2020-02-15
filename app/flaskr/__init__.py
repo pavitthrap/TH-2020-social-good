@@ -230,6 +230,10 @@ def create_app(test_config=None):
 		keywords= "retina"
 		return render_template('retina/post_answer.html', res=res, screen_text=screen_text)
 
+	@app.route('/seeker_main')
+	def seeker_main():
+		return render_template('retina/seeker_main.html')
+
 	@app.route('/upload_file', methods=['POST'])
 	def upload_file():
 		if request.method == 'POST':
