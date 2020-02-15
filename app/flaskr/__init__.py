@@ -63,8 +63,8 @@ def allowed_file(filename):
 
 def create_fake_data():
 	db = get_db()
-	query_ids = [3,1]
-	answer_ids = [3, 5, 2, 7, 8, 9]
+	query_ids = [3,1,2]
+	answer_ids = [3, 5, 2, 7, 8, 9, 10]
 
 	# Check to see if fake data's already been created
 	answer = db.execute(
@@ -76,11 +76,20 @@ def create_fake_data():
 	# Create fake data
 	username = g.user['username']
 	db.execute(
-		'UPDATE user SET query_list = ? WHERE username = ?', ("1,3", username)
+		'UPDATE user SET query_list = ? WHERE username = ?', ("1,3,2", username)
 	)
 	db.execute(
-	'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)',
-	(query_ids[0], 2, "What is the price", "Price below", "xbox_price.JPG", "price tag", "8", "8,9")
+	'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list, answer_state, machine_answer_id) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+	(query_ids[2], 2, "What is the thing", "Price below", "garden.JPG", "miscellaneous", "10", "10", 2, answer_ids[6])
+	)
+	db.execute(
+	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
+	(answer_ids[6], 4, 1, 3, 'Garden Fork', "dave")
+	)
+	#another one
+	db.execute(
+	'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list, answer_state, machine_answer_id) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+	(query_ids[0], 2, "What is the price", "Price below", "xbox_price.JPG", "price tag", "8", "8,9", 1, answer_ids[4])
 	)
 	db.execute(
 	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
@@ -90,6 +99,8 @@ def create_fake_data():
 	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
 	(answer_ids[5], 4, 4, 3, '$3990', "jane")
 	)
+
+	#another one
 	
 	db.execute(
 	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
@@ -100,8 +111,8 @@ def create_fake_data():
 	(answer_ids[3], 2, 4, 1, 'boy', "tester")
 	)
 	db.execute(
-	'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list, machine_answer_id) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-	(query_ids[1], 2, "Is this apple bad", "apple below", "124687474-rotten-apple-on-a-white-background.jpg", "produce", "3", "3,5,2,7", answer_ids[3])
+	'INSERT INTO query (id, author_id, title, subtitle, pic_filename, category, top_answer, answer_list, answer_state, machine_answer_id) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+	(query_ids[1], 2, "Is this apple bad", "apple below", "124687474-rotten-apple-on-a-white-background.jpg", "produce", "3", "3,5,2,7", 0, answer_ids[3])
 	)
 	db.execute(
 	'INSERT INTO answer (id, upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?, ?)',
