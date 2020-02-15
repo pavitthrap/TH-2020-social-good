@@ -43,6 +43,8 @@ assert endpoint
 
 computervision_client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(subscription_key))
 
+category_tags = {"food_" : "Food", "drink_" : "Drinks", "text_menu" : "Text -- Menus", "text_sign" : "Text -- Sign", "animal_" : "Animal", "abstract_" : "Abstract"}
+
 def get_db():
     """Connect to the application's configured database. The connection
     is unique for each request and will be reused if this is called
@@ -188,10 +190,12 @@ def create_app(test_config=None):
 		# 	print("Description: '{}'".format(description_results.captions[0].text))
 		return render_template('retina/query_create.html')
 
-	@app.route('/query_display')
-	def query_display():
-		full_path = os.path.join(request.host_url, 'static', 'uploads', request.args['filename'])
-		return render_template('retina/query_display.html', display_image = full_path)
+	# @app.route('/query_display')
+	# def query_display():
+	# 	screen_text = ""
+	# 	print("REQ ARGS:", request.args)
+	# 	full_path = os.path.join(request.host_url, 'static', 'uploads', request.args['filename'])
+	# 	return render_template('retina/query_display.html', screen_text=screen_text, display_image = full_path)
 
 	@app.route('/post_answer', methods=('GET', 'POST'))
 	def post_answer(query_id=0):
@@ -240,7 +244,7 @@ def create_app(test_config=None):
 
 		(print(query_id))
 		db = get_db()
-		create_fake_data()
+		# create_fake_data()
 
 		query = db.execute(
 		   	'SELECT * FROM query WHERE id = ?', (query_id,)
@@ -256,7 +260,7 @@ def create_app(test_config=None):
 	@app.route('/vote_answer')
 	def vote_answer():
 		db = get_db()
-		create_fake_data()
+		# create_fake_data()
 		query_id = request.args.get('query_id')
 		answer_id = request.args.get('answer_id')
 		up = request.args.get('up')
@@ -271,7 +275,6 @@ def create_app(test_config=None):
 			else: db.execute('UPDATE answer SET downvotes = ? WHERE id = ?', (downvotes + 1, answer_id))
 		db.commit()
 
-		create_fake_data()
 		if request.method == 'POST':
 
 			# Put the answer in the db
@@ -340,24 +343,44 @@ def create_app(test_config=None):
 				timestamp  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
 				title = request.form.get('title')
 				subtitle = request.form.get('subtitle')
-				category = request.form.get('category')
 
+				#TODO - add username
 				db.execute(
-					'INSERT INTO query (author_id, created, title, subtitle, pic_filename, category) VALUES (?, ?, ?, ?, ?, ?)',
-					(session.get('user_id'), timestamp, title, subtitle, file.filename, category)
+					'INSERT INTO query (author_id, created, title, subtitle, pic_filename, category, top_answer, answer_list) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+					(session.get('user_id'), timestamp, title, subtitle, file.filename, '', '0', '')
 				)
+
 				# Get query ID
 				query = db.execute('SELECT * FROM query WHERE title = ?', (title,)).fetchone()
 				query_id = query['id']
+				
+				print(query, query["title"])
+
 				# Generate machine description
 				print("===== Describe the local image =====")
 				local_image = open(file_path, "rb") 
-				description_features = ["categories"]
 				description_results = computervision_client.describe_image_in_stream(local_image)
+				local_image = open(file_path, "rb") 
+				description_features = ["categories"]
+				description_categories = computervision_client.analyze_image_in_stream(local_image, description_features)
+
+				image_category = "Miscellaneous"
+				if (len(description_categories.categories) > 0):
+					image_category = '{}'.format(description_categories.categories[0].name)
+					if image_category in category_tags:
+						image_category = category_tags[image_category]
+					else:
+						image_category = "Miscellaneous"
+
+				db.execute('UPDATE query SET category = ? WHERE id = ?', (image_category, query_id)).fetchone()
+
 				print("Description of local image: ")
+				description = ""
 				if (len(description_results.captions) == 0):
+					description = "None"
 					print("No description detected.")
 				else:
+					description = description_results.captions[0].text
 					print("Description: '{}'".format(description_results.captions[0].text))
 				db.execute(
 					'INSERT INTO answer (query_id, content, username) VALUES (?, ?, ?)',
@@ -369,6 +392,14 @@ def create_app(test_config=None):
 				db.execute(
 					'UPDATE query SET machine_answer_id = ? WHERE title = ?', (answer_id, title)
 				)
+
+				# Update user query list
+				user = db.execute('SELECT * FROM user WHERE username = ?', (g.user['username'],)).fetchone()
+				if user['query_list'] == "":
+					new_query_list = str(query_id)
+				else:
+					new_query_list = user['query_list'] + ',' + str(query_id)
+				db.execute('UPDATE user SET query_list = ? WHERE username = ?', (new_query_list, g.user['username']))
 				db.commit()
 				return redirect(url_for('index'))
 
@@ -376,8 +407,10 @@ def create_app(test_config=None):
 	def view_user_queries():
 		# Fetch user queries from db
 		db = get_db()
+		print('h')
 
-		# create_fake_data()
+		create_fake_data()
+		print('hi')
 
 		username = g.user["username"]
 		user = db.execute(
@@ -413,8 +446,7 @@ def create_app(test_config=None):
 
 		username = g.user["username"]
 		user = db.execute(
-            'SELECT * FROM user WHERE username = ?', (username,)
-        ).fetchone()
+			'SELECT * FROM user WHERE username = ?', (username,)).fetchone()
 
 		if user['query_list'] == '':
 			return render_template('retina/past_queries.html', user_queries=[], num_queries=0)
@@ -423,19 +455,21 @@ def create_app(test_config=None):
 		user_queries = []
 		for query_id in user_query_ids:
 			query = db.execute('SELECT * FROM query WHERE id = ?', (int(query_id),)).fetchone()
+			print(query_id)
 			top_answer = db.execute('SELECT * FROM answer WHERE id = ?', (int(query['top_answer']),)).fetchone()
 			num_answers = len(query['answer_list'].split(','))
 			query_answer_state = int(query['answer_state'])
 			color = 'red' if query_answer_state == 0 else 'yellow' if query_answer_state == 1 else 'green'
 			query_id = int(query_id)
 			user_queries.append((query, top_answer, num_answers, color, query_id))
-
+		
+		db.commit()
 		return render_template('retina/past_queries.html', user_queries=user_queries, num_queries=len(user_queries))
 
 	@app.route('/profile', methods=('GET', 'POST'))
 	def user_profile():
 		db = get_db()
-		create_fake_data()
+		# create_fake_data()
 
 		username = g.user["username"]
 		user_type = "Seeker" if g.user['user_type']==0 else "Answerer"
