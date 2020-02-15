@@ -1,0 +1,19 @@
+Metadata-Version: 2.1
+Name: azure-cognitiveservices-speech
+Version: 1.2.0
+Summary: Microsoft Cognitive Services Speech SDK
+Home-page: https://docs.microsoft.com/azure/cognitive-services/speech-service/
+Author: Microsoft
+Author-email: UNKNOWN
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+
+UNKNOWN
+
+

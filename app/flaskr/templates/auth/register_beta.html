@@ -1,0 +1,37 @@
+
+{% extends 'base.html' %}
+
+{% block mainhead %}
+  <h1>{% block title %}Register{% endblock %}</h1>
+{% endblock %}
+
+{% block mainbody %}
+<section class="download text-center" id="download">
+    <div class="container">
+      <div class="section-heading text-center">
+        <h2>Protect Your Loved Ones, and Yourself</h2>
+        <h3 >Use our app to recognize scammer and hackers.</h3>
+        <hr>
+
+      </div>
+
+      <div class="row">
+        <div class="col-md-8 mx-auto">
+          <h3 class="section-heading">Register for our beta today.</h3>
+           <img src="{{ url_for('static', filename = 'fraud_icon.png') }}" style="width:150px; margin-bottom:30px" alt="User Icon">
+      <form method="post">
+        <label for="name">Name</label>
+        <input name="name" id="name" required> <br>
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required> <br>
+        <input type="submit" value="Register">
+      </form>
+         
+          
+        </div>
+      </div>
+      
+    </div>
+</section>
+
+{% endblock %}

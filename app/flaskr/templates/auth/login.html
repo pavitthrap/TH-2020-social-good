@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Log In{% endblock %}</h1>
+{% endblock %}
+
+{% block mainbody %}
+
+<section class="download text-center" id="download">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 mx-auto">
+          <h2 class="section-heading">Log In</h2>
+           <img src="{{ url_for('static', filename = 'user_icon_2.png') }}" style="width:80px; margin-bottom:30px" alt="User Icon">
+          <form method="post">
+		    <label for="username">Username</label>
+		    <input name="username" id="username" required> <br>
+		    <label for="password">Password</label>
+		    <input type="password" name="password" id="password" required> <br>
+		    <input type="submit" value="Log In">
+		  </form>
+         
+          
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

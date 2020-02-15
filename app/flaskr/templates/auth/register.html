@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block mainhead %}
+  <h1>{% block title %}Register{% endblock %}</h1>
+{% endblock %}
+
+{% block mainbody %}
+
+<section class="download text-center" id="download">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 mx-auto">
+          <h2 class="section-heading">Register</h2>
+           <img src="{{ url_for('static', filename = 'register_icon.png') }}" style="width:80px; margin-bottom:30px" alt="User Icon">
+          <form method="post">
+		    <label for="username">Username</label>
+		    <input name="username" id="username" required> <br>
+		    <label for="password">Password</label>
+		    <input type="password" name="password" id="password" required> <br>
+		    <input type="submit" value="Register">
+		  </form>
+         
+          
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

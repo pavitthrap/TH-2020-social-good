@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+
+{% block mainbody %}
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+
+      // var updateFunction = function(){
+      //     var updater = window.setInterval(function() {
+      //       $.ajax({
+      //         type : 'POST',
+      //         url : "{{url_for('index')}}",
+      //         contentType: 'application/json;charset=UTF-8',
+      //         data : {'name': 'getupdate',},
+      //       });
+      //     }, 500);
+      //     window.setTimeout(function() {clearInterval(updater);},8000);
+
+      // }
+
+      $(function() {
+        $('input#main_text').bind('click', function() {
+          clicked = $(this).attr("text");
+          $.ajax({
+            type : 'POST',
+            url : "{{url_for('index')}}",
+            contentType: 'application/json;charset=UTF-8',
+            data : {'name': 'startdemo',},
+          }).delay(400).done(updateFunction);
+        });
+      })
+    </script>
+
+
+  <!-- <h1>{% block title %}Hello{% endblock %}</h1> -->
+  {% if g.user %}
+    <!--a class="action" href="{{ url_for('blog.create') }}">New</a-->
+
+      <div class="container h-100">
+        <div class="row h-100">
+          <div class="col-lg-3 my-auto">
+            <!--div class="header-content mx-auto">
+              <h1 class="mb-5">See how Scam Stopper can help!</h1>
+            </div-->
+            <form method="post" >
+              <input name="appdemo" href="#download" class="btn btn-outline btn-xl js-scroll-trigger" type="submit"value="App Demo">
+            </form>
+            <form method="post" >
+              <input name="phonedemo" href="#download" class="btn btn-outline btn-xl js-scroll-trigger" style="margin-top:30px;" type="submit" value="Call Demo">
+            </form>
+            <form method="post" >
+              <input name="analysis" href="#download" class="btn btn-outline btn-xl js-scroll-trigger" style="margin-top:30px;" type="submit" value="Call Analysis">
+            </form>
+            <form method="post" >
+              <input name="seecall" href="#download" class="btn btn-outline btn-xl js-scroll-trigger" style="margin-top:30px;" type="submit" value="See Transcript">
+            </form>
+          </div>
+          <div class="col-lg-6 my-auto">
+            <div class="device-container">
+              <div class="device-mockup iphone6_plus portrait white">
+                <div class="device">
+                  <div class="screen" style="color:white">
+                    <!-- Demo image for screen mockup, you can put an image here, some HTML, an animation, video, or anything else! -->
+                    <!--h3 style="display: block; margin-left: auto; margin-right: auto; margin-top:280px">Device Mockups</h3-->
+                    {% if g.state == 1 %}
+                    <img src="{{ url_for('static', filename = 'iphone-status.png') }}" style="width:100%;" alt="Iphone">
+                    <h2 class="text-center" style="margin-top:40px">{{screen_text|default("Unknown Caller", true)}}</h2>
+                    <form method="post" >
+                      <input id="main_text" type="image" src="{{ url_for('static', filename = 'acc_dec_icon.png') }}" style="width:230px; display: block; margin-left: auto; margin-right: auto; margin-top:260px" alt="Call Icon" href="{{ url_for('auth.logout') }}" type="submit" name="demo1">
+                    </form>
+
+                    {% elif g.state == 2 %}
+                    <img src="{{ url_for('static', filename = 'iphone-status.png') }}" style="width:100%;" alt="Iphone">
+                    <h2 class="text-center" style="margin-top:40px">Updatable Text</h2>
+                    <form method="post" >
+                      <input type="image" src="{{ url_for('static', filename = 'end_icon.png') }}" style="width:60px; display: block; margin-left: auto; margin-right: auto; margin-top:260px" alt="Call Icon" href="{{ url_for('auth.logout') }}" type="submit" name="demo2">
+                    </form>
+                      {% elif g.state == 3 %}
+                      <img src="{{ url_for('static', filename = 'iphone-status.png') }}" style="width:100%;" alt="Iphone">
+                      <h3 class="text-center" font face="verdana" style="margin-top:40px">Threat Level : {{screen_text|default("MEDIUM RISK", true)}} </h3>
+                      <table class="table table-borderless">
+                          <thead>
+                            <tr>
+                              <th scope="col">Analysis</th>
+                              <th scope="col">Level</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <th scope="row">Sentiment Analysis</th>
+                              <td>{{sentiment|default(0.9, true)}}<td>
+                            </tr>
+                            <tr>
+                              <th scope="row">Keyword Analysis</th>
+                              <td>{{keywords|default(1, true)}}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+
+                      <h6 class="text-center" style="margin-top:20px">
+                      We have notified your bank to keep watch for any transactions in the
+                    next 15 minutes. </h6>
+
+                      <form method="post" >
+                        <input type="image" src="{{ url_for('static', filename = 'end_icon.png') }}" style="width:60px; display: block; margin-left: auto; margin-right: auto; margin-top:260px" alt="Call Icon" href="{{ url_for('auth.logout') }}" type="submit" name="demo2">
+                      </form>
+
+                      {% elif g.state == 4 %}
+                      <img src="{{ url_for('static', filename = 'iphone-status.png') }}" style="width:100%;" alt="Iphone">
+                      
+                      <form method="post" >
+
+                        <input type="image" src="{{ url_for('static', filename = 'logo.png') }}" style="width:230px; display: block; margin-left: auto; margin-right: auto; margin-top:10px" alt="Scam pic" type="submit" name="enterapp">
+                      </form>
+
+                       {% elif g.state == 5 %}
+                      <img src="{{ url_for('static', filename = 'iphone-status.png') }}" style="width:100%;" alt="Iphone">
+
+                      <h3 class="text-center" font face="verdana" style="margin-top:40px">Scam Stopper</h3>
+
+                      <div class="container center_div">
+                      <form method="post">
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                      </div>
+                      <div class="form-group">
+                        <label for="examplePhoneNumber">Phone Number</label>
+                        <input type="tel" class="form-control" id="exampleInputNumber" placeholder="Enter Phone Number">
+                      </div>
+                      <div class="container center_div">
+                        <button name="bankacct" type="submit" style="margin-top:20px" class="btn btn-primary">Connect to your Bank Account</button>
+                      </div>
+                    </form>
+                    </div>
+
+                      {% elif g.state == 6 %}
+                        <img src="{{ url_for('static', filename = 'iphone-status.png') }}" style="width:100%;" alt="Iphone">
+                      <h6 class="text-center" style="margin-top:40px; padding-top:15px; margin:15px;">{{screen_text|default("Unknown Caller", true)}}</h6>
+                      <form method="post" >
+                        <input id="main_text" type="image" src="{{ url_for('static', filename = 'acc_dec_icon.png') }}" style="width:230px; display: block; margin-left: 28px; margin-right: auto; position:absolute; bottom:62px" alt="Call Icon" href="{{ url_for('auth.logout') }}" type="submit" name="demo1">
+                      </form>
+                      {% elif g.state == 7 %}
+                      <img src="{{ url_for('static', filename = 'iphone-status.png') }}" style="width:100%;" alt="Iphone">
+
+                      <h3 class="text-center" font face="verdana" style="margin-top:40px">Scam Stopper</h3>
+
+                      <div class="container center_div">
+                      <form method="post">
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Account Number</label>
+                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter bank acount number">
+                        
+                      </div>
+                      <div class="form-group">
+                        <label for="examplePhoneNumber">Routing Number</label>
+                        <input type="tel" class="form-control" id="exampleInputNumber" placeholder="Enter bank routing number">
+                      </div>
+                      <div class="container center_div">
+                        <button name="mainscreen" type="submit" style="margin-top:20px; margin-left:55px" class="btn btn-primary">Connect</button>
+                      </div>
+                    </form>
+                    </div>
+
+                    {% elif g.state == 8 %}
+                     <img src="{{ url_for('static', filename = 'iphone-status.png') }}" style="width:100%;" alt="Iphone">
+                      <h3 class="text-center" font face="verdana" style="margin-top:40px">Scam Stopper </h3>
+                      <table class="table table-borderless">
+                          <thead>
+                            <tr>
+                              <th scope="col">Threat Type</th>
+                              <th scope="col">Number this month</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <th scope="row">Email Scam</th>
+                              <td>12<td>
+                            </tr>
+                            <tr>
+                              <th scope="row">Phone Scam</th>
+                              <td>3</td>
+                            </tr>
+                          </tbody>
+                        </table>
+
+                      
+
+                     
+
+                    {% endif %}
+                    <!--img src="img/demo-screen-1.jpg" class="img-fluid" alt=""-->
+                  </div>
+
+                  <div class="button">
+                    <!-- You can hook the "home button" to some JavaScript events or just remove it -->
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 my-auto">
+
+          </div>
+        </div>
+      </div>
+
+  {% endif %}
+
+
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}
