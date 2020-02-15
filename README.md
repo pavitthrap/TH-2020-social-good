@@ -1,12 +1,14 @@
-# scamulya 
+# Retinoid
 
-Stop Senior Citizens from getting Scammed. Turn on our app when recieving phone calls, and we will detect if the 
-person you are talking to is scamming you! We do this by detecting classic trigger words that are common in scamc alls. 
 
 
 ### Installing
 
 A step by step series of examples that tell you how to get a development env running
+
+Update db:
+    sqlite3 mydatabase.db < flaskr/schema.sql
+    Then put the new database in the instance folder and rename to flaskr.sqlite
 
 
 ## Built With
@@ -18,8 +20,6 @@ A step by step series of examples that tell you how to get a development env run
 
 ## Authors ## 
 
-**Anusha Chillara**
-**Amulya Musipatla**
 **Namita Dongre**
 **Pavitthra Pandurangan**
 
