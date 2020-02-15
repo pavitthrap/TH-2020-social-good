@@ -13,32 +13,17 @@
         <div class="black-box" style="text-align: center; padding: 40px">
             <div class="row"  >
                 <div class="col-md-6">
-                    <h2 style="font-weight: bold;">Global Rank</h2>
-                    <h4> 1343/25000 </h4>
+                    <h2 style="font-weight: bold;">Questions Asked</h2>
+                    <h4> {{ num_queries }} </h4>
                 </div>
 
                 <div class="col-md-6">
-                    <h2 style="font-weight: bold;">Country Rank</h2>
-                    <h4> 56/2004 </h4>
+                    <h2 style="font-weight: bold;">Friends</h2>
+                    <h4> 17 </h4>
                 </div>
             </div>
-            <hr style="border-color: white">
-      
-            <h2 style="font-weight: bold;">Badges</h2>
-            <div class="row"> 
-                <div class="col-md-3">
-                    <img src="{{ url_for('static', filename = 'folder.png') }}" style="width:100px; " alt="User Badge">
-                </div>
-                 <div class="col-md-3">
-                    <img src="{{ url_for('static', filename = 'love.png') }}" style="width:100px; " alt="User Badge">
-                </div>
-                <div class="col-md-3">
-                    <img src="{{ url_for('static', filename = 'report.svg') }}" style="width:100px; " alt="User Badge">
-                </div>
-                <div class="col-md-3">
-                    <img src="{{ url_for('static', filename = 'strawberry.png') }}" style="width:100px; " alt="User Badge">
-                </div>
-            </div>
+
+
         </div>
     </div>
 {% endblock %}
