@@ -272,7 +272,6 @@ def create_app(test_config=None):
 			print("No description detected.")
 		else:
 			print("Description: '{}'".format(description_results.captions[0].text))
-			print("Tags: {}".format(description_results.tags))
 		return render_template('retina/query_create.html')
 
 	@app.route('/query_display')
