@@ -168,13 +168,12 @@ def create_app(test_config=None):
 			print("Description: '{}'".format(description_results.captions[0].text))
 		return render_template('retina/query_create.html')
 
-	@app.route('/query_display')
-	def query_display():
-		screen_text = ""
-		sentiment=0.9
-		keywords= "retina"
-		full_path = os.path.join(request.host_url, 'static', 'uploads', request.args['filename'])
-		return render_template('retina/query_display.html', screen_text=screen_text, display_image = full_path)
+	# @app.route('/query_display')
+	# def query_display():
+	# 	screen_text = ""
+	# 	print("REQ ARGS:", request.args)
+	# 	full_path = os.path.join(request.host_url, 'static', 'uploads', request.args['filename'])
+	# 	return render_template('retina/query_display.html', screen_text=screen_text, display_image = full_path)
 
 	@app.route('/post_answer', methods=('GET', 'POST'))
 	def post_answer(query_id=0):
@@ -315,8 +314,11 @@ def create_app(test_config=None):
 	def view_user_queries():
 		# Fetch user queries from db
 		db = get_db()
+		print('h')
 
 		create_fake_data()
+		print('hi')
+
 
 		username = g.user["username"]
 		user = db.execute(
