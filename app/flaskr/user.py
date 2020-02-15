@@ -16,5 +16,10 @@ def user_profile():
 	print(g.user['profile_pic_filename'] )
 	profile_pic_filename = "user_icon_2.png" if g.user['profile_pic_filename'] == None else g.user['profile_pic_filename']
 
-	return render_template('retina/user_profile.html', username=username, user_type=user_type,
+	# Seeker profile
+	if g.user['user_type']==0:
+		return render_template('retina/user_profile.html', username=username, user_type=user_type,
+							user_picture_filename=profile_pic_filename)
+	else:
+		return render_template('retina/ans_user_profile.html', username=username, user_type=user_type,
 							user_picture_filename=profile_pic_filename)

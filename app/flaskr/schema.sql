@@ -27,6 +27,7 @@ CREATE TABLE query (
   top_answer TEXT,
   answer_list TEXT,
   answer_state INTEGER DEFAULT 0,
+  machine_answer_id INTEGER DEFAULT 0,
   FOREIGN KEY (author_id) REFERENCES user (id)
 );
 

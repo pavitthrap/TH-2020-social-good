@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block mainbody %}
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+
+      var container = document.getElementByClass("query-view");
+      
+
+      $(function() {
+        $('input#main_text').bind('click', function() {
+          clicked = $(this).attr("text");
+          $.ajax({
+            type : 'POST',
+            url : "{{url_for('index')}}",
+            contentType: 'application/json;charset=UTF-8',
+            data : {'name': 'startdemo',},
+          }).delay(400).done(updateFunction);
+        });
+      })
+    </script>
+
+    {% if g.user %}
+
+    <div class="container" style="padding-top: 100px">
+        {% for query, top_answer, num_answers, color, query_id in user_queries %}
+            {% set redirect= url_for('view_answer', query_id=query_id)   %}
+            {% set color_class = color+'box' %}
+            <div class="black-box {{color_class}}" onclick= "location.href='{{redirect}}' ;">
+                <div class="row">
+                    <div class="col-md-1"> </div>
+                    <div class="col-md-2" style="padding-top: 15px">
+                        <img src="{{ url_for('static', filename = query.pic_filename) }}" style="width:80px; margin-bottom:30px" alt="Query Picture">
+                        <h6 class="caps_class"> CATEGORY: {{ query.category }}</h6>
+                    </div>
+                    <div class="col-md-7" style="padding-top: 10px">
+                        <div class="row">
+                            <h1 class="query-heading"> {{ query.title }} </h1>
+                        </div>
+                        <div class="row">
+                            <h3> Top Response: {{ top_answer.content }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-2" style="padding-top: 15px">
+                        <h1 >{{ num_answers }} </h1>
+                        <h2>comments </h2>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}
