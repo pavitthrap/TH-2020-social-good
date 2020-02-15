@@ -207,9 +207,34 @@ def create_app(test_config=None):
 		pass
 
     # a simple page that says hello 
-	@app.route('/hello')
-	def hello():
-		return 'Hello, World!'
+	@app.route('/query_create')
+	def query_create():
+		screen_text = ""
+		sentiment=0.9
+		keywords= "retina"
+		return render_template('retina/query_create.html', screen_text=screen_text)
+	
+	@app.route('/query_display')
+	def query_display():
+		screen_text = ""
+		sentiment=0.9
+		keywords= "retina"
+		full_path = os.path.join(request.host_url, 'static', 'uploads', request.args['filename'])
+		return render_template('retina/query_display.html', screen_text=screen_text, display_image = full_path)
+
+	@app.route('/upload_file', methods=['POST'])
+	def upload_file():
+		if request.method == 'POST':
+			# check if the post request has the file part
+			if 'file' not in request.files:
+				return redirect(request.url)
+			file = request.files['file']
+
+			if file.filename == '':
+				return redirect(request.url)
+			if file and allowed_file(file.filename):
+				file.save(os.path.join(app.static_folder, 'uploads', file.filename))
+				return redirect(url_for('query_display', filename=file.filename))
 
 	#@app.before_request	
 	@app.route('/', methods=('GET', 'POST'))
