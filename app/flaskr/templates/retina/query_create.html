@@ -16,12 +16,32 @@
           }).delay(400).done(updateFunction);
         });
       })
+
+      function handleFileSelect(evt) {
+        var files = evt.target.files;
+        var f = files[0];
+        var reader = new FileReader();
+         
+        reader.onload = (function(theFile) {
+              return function(e) {
+                document.getElementById('list').innerHTML = ['<img src="', e.target.result,'" title="', theFile.name, '" width="400" />'].join('');
+              };
+        })(f);
+           
+        reader.readAsDataURL(f);
+      }
+
+      $(document).ready(function() {
+        console.log( "ready!" );
+        document.getElementById('fileToUpload').addEventListener('change', handleFileSelect, false);
+      });
+      
     </script>
 
     {% if g.user %}
-        <div class="container h-100">
+        <div class="container h-100" style="padding-top: 100px">
             <div class="row h-100">
-                <div class="col-lg-12 my-auto">
+                <div class="col-lg-6 my-auto">
                     <form action="/upload_file" method="post" enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="exampleInputEmail1">Title</label>
@@ -40,6 +60,9 @@
                         </div>
                         <button type="submit" class="rnd-btn btn-primary mb-2">Upload Image</button>
                     </form>
+                </div>
+                <div class="col-lg-6 my-auto">
+                  <output id="list"></output>
                 </div>
             </div>
         </div>
