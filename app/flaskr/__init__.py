@@ -158,23 +158,24 @@ def create_app(test_config=None):
     # a simple page that says hello
 	@app.route('/query_create')
 	def query_create():
-		remote_image_url = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-sample-data-files/master/ComputerVision/Images/landmark.jpg"
+		# local_image_path = "flaskr/static/scam.jpg"
+		# local_image = open(local_image_path, "rb") 
 		
-		print("===== Describe the sample image =====")
-		# Call API
-		description_features = ["categories"]
-		description_results = computervision_client.describe_image(remote_image_url)
-		description_categories = computervision_client.analyze_image(remote_image_url, description_features)
-		print(description_results)
-		print("CATEGORIES\n")
-		print(description_categories)
+		# print("===== Describe the sample image =====")
+		# # Call API
+		# description_features = ["categories"]
+		# description_results = computervision_client.describe_image_in_stream(local_image)
+		# description_categories = computervision_client.analyze_image_in_stream(local_image, description_features)
+		# print(description_results)
+		# print("CATEGORIES\n")
+		# print(description_categories)
 
-		# Get the captions (descriptions) from the response, with confidence level
-		print("Description of remote image: ")
-		if (len(description_results.captions) == 0):
-			print("No description detected.")
-		else:
-			print("Description: '{}'".format(description_results.captions[0].text))
+		# # Get the captions (descriptions) from the response, with confidence level
+		# print("Description of remote image: ")
+		# if (len(description_results.captions) == 0):
+		# 	print("No description detected.")
+		# else:
+		# 	print("Description: '{}'".format(description_results.captions[0].text))
 		return render_template('retina/query_create.html')
 
 	@app.route('/query_display')
@@ -306,7 +307,8 @@ def create_app(test_config=None):
 			if file.filename == '':
 				return redirect(request.url)
 			if file and allowed_file(file.filename):
-				file.save(os.path.join(app.static_folder, 'uploads', file.filename))
+				file_path = os.path.join(app.static_folder, 'uploads', file.filename)
+				file.save(file_path)
 
 				db = get_db()
 				timestamp  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
@@ -317,6 +319,29 @@ def create_app(test_config=None):
 				db.execute(
 					'INSERT INTO query (author_id, created, title, subtitle, pic_filename, category) VALUES (?, ?, ?, ?, ?, ?)',
 					(session.get('user_id'), timestamp, title, subtitle, file.filename, category)
+				)
+				# Get query ID
+				query = db.execute('SELECT * FROM query WHERE title = ?', (title,)).fetchone()
+				query_id = query['id']
+				# Generate machine description
+				print("===== Describe the local image =====")
+				local_image = open(file_path, "rb") 
+				description_features = ["categories"]
+				description_results = computervision_client.describe_image_in_stream(local_image)
+				print("Description of local image: ")
+				if (len(description_results.captions) == 0):
+					print("No description detected.")
+				else:
+					print("Description: '{}'".format(description_results.captions[0].text))
+				db.execute(
+					'INSERT INTO answer (query_id, content, username) VALUES (?, ?, ?)',
+					(query_id, description_results.captions[0].text, g.user['username'])
+				)
+				# Get answer ID
+				answer = db.execute('SELECT * FROM answer WHERE content = ?', (description_results.captions[0].text,)).fetchone()
+				answer_id = answer['id']
+				db.execute(
+					'UPDATE query SET machine_answer_id = ? WHERE title = ?', (answer_id, title)
 				)
 				db.commit()
 				return redirect(url_for('query_display', filename=file.filename))
