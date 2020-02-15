@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block mainbody %}
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+
+      var container = document.getElementByClass("query-view");
+      
+
+      $(function() {
+        $('input#main_text').bind('click', function() {
+          clicked = $(this).attr("text");
+          $.ajax({
+            type : 'POST',
+            url : "{{url_for('index')}}",
+            contentType: 'application/json;charset=UTF-8',
+            data : {'name': 'startdemo',},
+          }).delay(400).done(updateFunction);
+        });
+      })
+    </script>
+
+    {% if g.user %}
+
+    <div class="container" style="padding-top: 100px">
+        <h1>Most active users</h1>
+        <table class="table table-striped table-dark">
+            <thead>
+              <tr>
+                <th scope="col">Rank</th>
+                <th scope="col">Username</th>
+                <th scope="col">Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>John</td>
+                <td>78</td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>Jane</td>
+                <td>57</td>
+              </tr>
+              <tr>
+                <th scope="row">3</th>
+                <td>Test</td>
+                <td>43</td>
+              </tr>
+            </tbody>
+          </table>
+    </div>
+
+    {% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}

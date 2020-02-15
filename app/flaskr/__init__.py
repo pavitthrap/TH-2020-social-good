@@ -307,6 +307,10 @@ def create_app(test_config=None):
 	def seeker_main():
 		return render_template('retina/seeker_main.html')
 
+	@app.route('/leaderboard')
+	def leaderboard():
+		return render_template('retina/leaderboard.html')
+
 	@app.route('/upload_file', methods=['POST'])
 	def upload_file():
 		if request.method == 'POST':
