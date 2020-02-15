@@ -35,7 +35,8 @@ CREATE TABLE answer (
   upvotes INTEGER DEFAULT 0,
   downvotes INTEGER DEFAULT 0,
   query_id INTEGER NOT NULL,
-  content TEXT NOT NULL
+  content TEXT NOT NULL, 
+  username TEXT NOT NULL
 );
 
 CREATE TABLE status (

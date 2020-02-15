@@ -34,6 +34,12 @@ hr {
   font-size: 50px;
 }
 
+
+.query-heading {
+  font-weight: bold;
+  font-size: 40px;
+}
+
 #seeker-main > .row {
   text-align: center!important;
   display: block;
@@ -45,4 +51,20 @@ hr {
   height: 100px;
 }
 
+
+.greenbox {
+  background: rgba(0, 175, 80, 0.4);;
+}
+
+.redbox {
+  background: rgba(255, 0, 20, 0.3);;
+}
+
+.yellowbox {
+  background: rgba(255, 204, 0, 0.3);;
+}
+
+.caps_class {
+  font-family: 'Lato', 'Helvetica', 'Arial', 'sans-serif';
+}
 

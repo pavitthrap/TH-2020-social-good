@@ -231,18 +231,73 @@ def create_app(test_config=None):
 			# TODO: update the query to add this answer id to it 
 			# TODO: return to the home feed for posts 
 			# TODO: add query_state field for the query 
-			return render_template('retina/post_answer.html', res=query, screen_text=screen_text)
+			return render_template('retina/query_create.html')
 
+		# query = db.execute(
+		#    	'SELECT * FROM query WHERE id = ?', (query_id,)
+		#    	).fetchone()
 		query = db.execute(
-	    	'SELECT * FROM query WHERE id = ?', (query_id,)
+	    	'SELECT * FROM query'
 	    	).fetchone()
 
 		print(query)
-		
+
 		screen_text = ""
 		sentiment=0.9
 		keywords= "retina"
 		return render_template('retina/post_answer.html', res=query, screen_text=screen_text)
+
+	@app.route('/view_answer')
+	def view_answer(query_id=0):
+		db = get_db()
+		create_fake_data()
+		# query = db.execute(
+		#    	'SELECT * FROM query WHERE id = ?', (query_id,)
+		#    	).fetchone()
+		query = db.execute(
+	    	'SELECT * FROM query'
+	    	).fetchone()
+
+
+		print(query)
+
+		screen_text = ""
+		sentiment=0.9
+		keywords= "retina"
+		return render_template('retina/view_answer.html', res=query, screen_text=screen_text)
+
+
+	@app.route('/vote_answer')
+	def vote_answer(query_id=0):
+		db = get_db()
+		create_fake_data()
+		if request.method == 'POST':
+			answer = request.form['answer']
+
+			# TODO: put the answer in the DB 
+			# TODO: update the query to add this answer id to it 
+			# TODO: return to the home feed for posts 
+			# TODO: add query_state field for the query 
+			return render_template('retina/query_create.html')
+
+		# query = db.execute(
+		#    	'SELECT * FROM query WHERE id = ?', (query_id,)
+		#    	).fetchone()
+		query = db.execute(
+	    	'SELECT * FROM query'
+	    	).fetchone()
+
+		print(query)
+
+		query_answer_ids = query['answer_list'].split(',')
+		query_answers = []
+		for answer_id in query_answer_ids:
+			print(answer_id)
+			answer = db.execute('SELECT * FROM answer WHERE id = ?', (int(answer_id),)).fetchone()
+			user_queries.append((answer))
+
+		return render_template('retina/vote_answer.html', answer=answer, top_answer=query["top_answer"])
+
 
 	@app.route('/seeker_main')
 	def seeker_main():
