@@ -198,22 +198,22 @@ def create_app(test_config=None):
 	# 	return render_template('retina/query_display.html', screen_text=screen_text, display_image = full_path)
 
 	@app.route('/post_answer', methods=('GET', 'POST'))
-	def post_answer(query_id=0):
+	def post_answer():
 		db = get_db()
-		query_ids = create_fake_data()
-		query_id = query_ids[0]
+		query_id = request.args.get('query_id')
+		# query_ids = create_fake_data()
 		if request.method == 'POST':
 			# Put the answer in the db
 			answer = request.form['answer']
-			db.execute('INSERT INTO answer (upvotes, downvotes, query_id, content) VALUES ( ?, ?, ?, ?)',
-						(0, 0, query_id, answer))
+			db.execute('INSERT INTO answer (upvotes, downvotes, query_id, content, username) VALUES ( ?, ?, ?, ?, ?)',
+						(0, 0, query_id, answer, g.user["username"]))
 			answer= db.execute('SELECT * FROM answer WHERE content = ?',
 						(answer,)).fetchone()
 			answer_id = answer['id']
 
 			# Update the corresponding query's answer_list and top_answer fields as appropriate
 			query = db.execute('SELECT * FROM query WHERE id = ?', (query_id,)).fetchone()
-			new_answer_list = query['answer_list'] + ',' + str(answer_id)
+			new_answer_list = (query['answer_list'] + ',' + str(answer_id)) if (query != None) else str(answer_id)
 			new_query_state = 0 # unanswered
 			db.execute(
 				'UPDATE query SET answer_list = ?, answer_state = ? WHERE id = ?', (new_answer_list, new_query_state, query_id)
@@ -223,7 +223,9 @@ def create_app(test_config=None):
 				db.execute(
 					'UPDATE query SET top_answer = ? WHERE id = ?', (str(top_answer_id), query_id)
 				)
-			return render_template('retina/query_create.html')
+
+			db.commit()
+			return redirect(url_for("index"))
 
 		# TODO: uncomment below
 		# query = db.execute(
@@ -297,17 +299,20 @@ def create_app(test_config=None):
 				db.execute(
 					'UPDATE query SET top_answer = ? WHERE id = ?', (str(top_answer_id), query_id)
 				)
-			return render_template('retina/query_create.html')
+			return render_template('retina/query_create.html', query_id=query_id)
 
-		# query = db.execute(
-		#    	'SELECT * FROM query WHERE id = ?', (query_id,)
-		#    	).fetchone()
 		query = db.execute(
-	    	'SELECT * FROM query'
-	    	).fetchone()
+		   	'SELECT * FROM query WHERE id = ?', (query_id,)
+		   	).fetchone()
+		# query = db.execute(
+	 #    	'SELECT * FROM query'
+	 #    	).fetchone()
 
 
 		query_answer_ids = query['answer_list'].split(',')
+		if  query['answer_list'] == '':
+			return render_template('retina/vote_answer.html', res=query, answers=[], top_answer=None)
+
 		query_answers = []
 		for answer_id in query_answer_ids:
 			answer = db.execute('SELECT * FROM answer WHERE id = ?', (int(answer_id),)).fetchone()

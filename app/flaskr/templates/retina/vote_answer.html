@@ -59,7 +59,7 @@
 
             <div style="height:20px"> </div>
 
-            <form action="{{ url_for('post_answer') }}" method="post" >
+            <form action="{{ url_for('post_answer', query_id=query_id) }}" method="post" >
               <div class="form-group">
                 <label for="comment context"> Don't see any satisfactory answers? Contribute your answer below. </label>
                 <textarea class="form-control" name="answer" rows="3" placeholder="Your answer here."></textarea>
